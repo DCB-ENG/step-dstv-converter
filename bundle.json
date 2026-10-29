@@ -1,0 +1,57 @@
+{
+  "version": "0.1.0",
+  "files": [
+    {
+      "path": "app.js",
+      "sha256": "cfb2ea5a6b080b6725ee2a1d7e47f703d5248a8667874c0c4c76dd199da11ae9"
+    },
+    {
+      "path": "index.html",
+      "sha256": "4a8e4d91772f9f2a9ad5bb7b812538fc1f1719639800eb98b662affd3e8301df"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "sha256": "eb3d7b5485466acbd81f2b496f595ab637d2792e268206b27d99e793bdb67549"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "sha256": "44cca886556f909c92e8856945be1c55371698d06d052c6fe7cee7c6fb8e316f"
+    },
+    {
+      "path": "NOTICE",
+      "sha256": "418d110fb7dfa541d6e2a9405badfdfc2cd8b8ee762efa6e8dc10014b91b2ac3"
+    },
+    {
+      "path": "pkg/step_dstv_core.d.ts",
+      "sha256": "b2e5f94f6c1e833205fb791a6fee9c8f3c4e894878422584d685840b3ae45ef8"
+    },
+    {
+      "path": "pkg/step_dstv_core.js",
+      "sha256": "a7a81fb53408ea7dc45a4465d7d970f3b37f4da48492490e999777beec80f13e"
+    },
+    {
+      "path": "pkg/step_dstv_core_bg.wasm",
+      "sha256": "14bf0e6598b1d9109017be987cd288d812939850e3a49f11401e0bb18961e9ff"
+    },
+    {
+      "path": "pkg/step_dstv_core_bg.wasm.d.ts",
+      "sha256": "68f0942dc344b123bd1feab3c394d68fe39ea58b3e73c52024c9c5a8ce28fd99"
+    },
+    {
+      "path": "SOURCE-NOTICE.md",
+      "sha256": "2d938db4c22520d5ecfad6ee1f72fb76bd9686926d4c554d2209312d05c0e350"
+    },
+    {
+      "path": "style.css",
+      "sha256": "f44fd68d148ffc2fc67b7ed3b7af337480dba016b4583fb7bef285aaa4fd42c7"
+    },
+    {
+      "path": "THIRD-PARTY-LICENSES.txt",
+      "sha256": "824f61c08c03084ed008f92c180e1c0eb79c126054aa6212f92a61c5a76b0e99"
+    },
+    {
+      "path": "worker.js",
+      "sha256": "430c212ea52cc183d382dbdba1a0d8082a3b19571984cbad2c2336105bac7a35"
+    }
+  ]
+}
