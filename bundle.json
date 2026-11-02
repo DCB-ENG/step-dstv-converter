@@ -3,11 +3,11 @@
   "files": [
     {
       "path": "app.js",
-      "sha256": "cfb2ea5a6b080b6725ee2a1d7e47f703d5248a8667874c0c4c76dd199da11ae9"
+      "sha256": "cc8c138129f0eb41b59bb396bc8d56220f65abb895198ba900178d85f37f326b"
     },
     {
       "path": "index.html",
-      "sha256": "4a8e4d91772f9f2a9ad5bb7b812538fc1f1719639800eb98b662affd3e8301df"
+      "sha256": "1cfc33c46f9741fc2faa006f630995259d8517cbd00c2d3d5bed09a139d089ce"
     },
     {
       "path": "LICENSE-APACHE",
@@ -39,15 +39,39 @@
     },
     {
       "path": "SOURCE-NOTICE.md",
-      "sha256": "2d938db4c22520d5ecfad6ee1f72fb76bd9686926d4c554d2209312d05c0e350"
+      "sha256": "3b23f53ad47d5845f0951586cbb158be38923339b74c74961e0b601f58cf811f"
     },
     {
       "path": "style.css",
-      "sha256": "f44fd68d148ffc2fc67b7ed3b7af337480dba016b4583fb7bef285aaa4fd42c7"
+      "sha256": "085839cc2d90706489981bcb85fdd136aaa2915fbff57aff045a89947d0507f4"
     },
     {
       "path": "THIRD-PARTY-LICENSES.txt",
       "sha256": "824f61c08c03084ed008f92c180e1c0eb79c126054aa6212f92a61c5a76b0e99"
+    },
+    {
+      "path": "vendor/three/LICENSE",
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "vendor/three/OrbitControls.js",
+      "sha256": "a747d56dd959510407777f1800792b2b52c0a435980fd6e40caf303d8a674b9e"
+    },
+    {
+      "path": "vendor/three/provenance.json",
+      "sha256": "2f8b7d22f6a0f3b8359bffd4d1fb777162dbf5ffb72b7800943279abc74814ea"
+    },
+    {
+      "path": "vendor/three/three.core.js",
+      "sha256": "613e370f76638fdef83926642bf256dc9615684922de1ce1f63a8583e5d78578"
+    },
+    {
+      "path": "vendor/three/three.module.js",
+      "sha256": "104f56145899722094556490d787aae0617cc2fc3382f31df02d724ea1aee341"
+    },
+    {
+      "path": "viewer.js",
+      "sha256": "d0d7747e2a8d51ff22ac15547aebf70bc2a7d128f736235b3aa956486b694126"
     },
     {
       "path": "worker.js",

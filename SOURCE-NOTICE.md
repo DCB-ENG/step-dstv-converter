@@ -1,6 +1,6 @@
 # Local STEP → DSTV prototype
 
-This is private development work, not an official SolidCraft release or an
+This is a user-maintained experimental preview, not an official SolidCraft release or an
 accepted upstream contribution. No upstream submission/publication is authorised.
 
 The geometry runtime uses the existing public API of SolidCraft v0.23.0,
@@ -53,3 +53,12 @@ reference origins, and reverses the angle U origin/direction.
 Recognised edge slots are shaped AK contours. Other cutting contours, enclosed
 slots and mitres remain unsupported and are refused. B5 is used only from the
 user-supplied local path; its STEP is not bundled or published.
+# Browser viewer dependency
+
+The interactive viewer uses Three.js and OrbitControls 0.187.0 (MIT), vendored
+from the official npm archive. Its license and file hashes are in
+`vendor/three/LICENSE` and `vendor/three/provenance.json` in the browser bundle.
+Only the OrbitControls import is rewritten to use the adjacent pinned module.
+Normal builds and browser use require no CDN or npm connection. Camera movement
+does not transform the imported B-rep, the working axes or NC1 output.
+
