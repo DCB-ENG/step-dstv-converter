@@ -1,0 +1,33 @@
+{
+  "package": "three",
+  "version": "0.187.0",
+  "url": "https://registry.npmjs.org/three/-/three-0.187.0.tgz",
+  "integrity": "sha512-Qiu7R+Cmh8CstZsY1uJOSWnVlfo7ZtNLV7mF8Jltk3LB3AtDu9cRZlcnRKkAk8Y4z6KKw35z7Y7Urd7jWY8etA==",
+  "modification": "OrbitControls bare three import rewritten to the adjacent pinned module; all other files unchanged.",
+  "files": [
+    {
+      "path": "three.module.js",
+      "npm_path": "build/three.module.js",
+      "source_sha256": "104f56145899722094556490d787aae0617cc2fc3382f31df02d724ea1aee341",
+      "sha256": "104f56145899722094556490d787aae0617cc2fc3382f31df02d724ea1aee341"
+    },
+    {
+      "path": "three.core.js",
+      "npm_path": "build/three.core.js",
+      "source_sha256": "613e370f76638fdef83926642bf256dc9615684922de1ce1f63a8583e5d78578",
+      "sha256": "613e370f76638fdef83926642bf256dc9615684922de1ce1f63a8583e5d78578"
+    },
+    {
+      "path": "OrbitControls.js",
+      "npm_path": "examples/jsm/controls/OrbitControls.js",
+      "source_sha256": "e7fca2fe9e7670a828af9b28084669a5909445b7f36f1f26cee9bf8f2961c32c",
+      "sha256": "a747d56dd959510407777f1800792b2b52c0a435980fd6e40caf303d8a674b9e"
+    },
+    {
+      "path": "LICENSE",
+      "npm_path": "LICENSE",
+      "source_sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    }
+  ]
+}
