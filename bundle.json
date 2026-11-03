@@ -3,11 +3,11 @@
   "files": [
     {
       "path": "app.js",
-      "sha256": "cc8c138129f0eb41b59bb396bc8d56220f65abb895198ba900178d85f37f326b"
+      "sha256": "7e4a3fb40d97bf01cdd8847005806233b9fb4f393f729b0e38acce53ac8430ce"
     },
     {
       "path": "index.html",
-      "sha256": "1cfc33c46f9741fc2faa006f630995259d8517cbd00c2d3d5bed09a139d089ce"
+      "sha256": "e9e33f02a50a2744774b584d0897f3ecef34fb8cafa4e928bc65f091ffbd9dfa"
     },
     {
       "path": "LICENSE-APACHE",
@@ -23,27 +23,27 @@
     },
     {
       "path": "pkg/step_dstv_core.d.ts",
-      "sha256": "b2e5f94f6c1e833205fb791a6fee9c8f3c4e894878422584d685840b3ae45ef8"
+      "sha256": "4b4b47e5cf779a6644a570e4af4c357a065eb5960d65423d0d2b19da2bf56291"
     },
     {
       "path": "pkg/step_dstv_core.js",
-      "sha256": "a7a81fb53408ea7dc45a4465d7d970f3b37f4da48492490e999777beec80f13e"
+      "sha256": "17706194972d26bad2fdb9ffd48d54322bdb229d7d4d0ef2667492313ef200c4"
     },
     {
       "path": "pkg/step_dstv_core_bg.wasm",
-      "sha256": "14bf0e6598b1d9109017be987cd288d812939850e3a49f11401e0bb18961e9ff"
+      "sha256": "0986f455537ba7373fff5683e37d28d4a17c4278a29520f8aa693d2041cd2904"
     },
     {
       "path": "pkg/step_dstv_core_bg.wasm.d.ts",
-      "sha256": "68f0942dc344b123bd1feab3c394d68fe39ea58b3e73c52024c9c5a8ce28fd99"
+      "sha256": "5840a303f4629d42ee73dd3eb99744ea8e1d9310b4e0f066a2adf682cb51522c"
     },
     {
       "path": "SOURCE-NOTICE.md",
-      "sha256": "3b23f53ad47d5845f0951586cbb158be38923339b74c74961e0b601f58cf811f"
+      "sha256": "8edf1df73a615ca9cb16f9c8d2622d5b00653e599f6fc226d9ddb36970c936ba"
     },
     {
       "path": "style.css",
-      "sha256": "085839cc2d90706489981bcb85fdd136aaa2915fbff57aff045a89947d0507f4"
+      "sha256": "c4b026a7084d199950f1c6376f502a7e6b97c28ee5a77a22e4db5f7295b475b5"
     },
     {
       "path": "THIRD-PARTY-LICENSES.txt",
@@ -75,7 +75,7 @@
     },
     {
       "path": "worker.js",
-      "sha256": "430c212ea52cc183d382dbdba1a0d8082a3b19571984cbad2c2336105bac7a35"
+      "sha256": "a8e1d7ff6b7956aa35ecc6c3087eb9d89eefd1ffe650b6394caf471a21d8ae91"
     }
   ]
 }

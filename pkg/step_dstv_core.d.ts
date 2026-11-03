@@ -6,10 +6,25 @@ export class BrowserConversion {
     [Symbol.dispose](): void;
     analyze(): string;
     static detected(step: string): BrowserConversion;
+    static detected_with_verification(step: string, verification_json: string): BrowserConversion;
     export_nc1(options_json: string): string;
     constructor(step: string, orientation_json: string);
     preview(): string;
+    static with_verification(step: string, orientation_json: string, verification_json: string): BrowserConversion;
 }
+
+export class BrowserPlate {
+    private constructor();
+    free(): void;
+    [Symbol.dispose](): void;
+    analyze(): string;
+    static dxf(text: string, options_json: string): BrowserPlate;
+    export_nc1(options_json: string): string;
+    preview(): string;
+    static step(text: string, orientation_json: string): BrowserPlate;
+}
+
+export function browser_plate_sample(kind: string, dxf: boolean): string;
 
 export function browser_profile_sample(family: string, with_holes: boolean): string;
 
@@ -20,13 +35,22 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
     readonly memory: WebAssembly.Memory;
     readonly __wbg_browserconversion_free: (a: number, b: number) => void;
+    readonly __wbg_browserplate_free: (a: number, b: number) => void;
+    readonly browser_plate_sample: (a: number, b: number, c: number) => [number, number, number, number];
     readonly browser_profile_sample: (a: number, b: number, c: number) => [number, number, number, number];
     readonly browser_sample: (a: number) => [number, number, number, number];
     readonly browserconversion_analyze: (a: number) => [number, number, number, number];
     readonly browserconversion_detected: (a: number, b: number) => [number, number, number];
+    readonly browserconversion_detected_with_verification: (a: number, b: number, c: number, d: number) => [number, number, number];
     readonly browserconversion_export_nc1: (a: number, b: number, c: number) => [number, number, number, number];
     readonly browserconversion_new: (a: number, b: number, c: number, d: number) => [number, number, number];
     readonly browserconversion_preview: (a: number) => [number, number, number, number];
+    readonly browserconversion_with_verification: (a: number, b: number, c: number, d: number, e: number, f: number) => [number, number, number];
+    readonly browserplate_analyze: (a: number) => [number, number, number, number];
+    readonly browserplate_dxf: (a: number, b: number, c: number, d: number) => [number, number, number];
+    readonly browserplate_export_nc1: (a: number, b: number, c: number) => [number, number, number, number];
+    readonly browserplate_preview: (a: number) => [number, number, number, number];
+    readonly browserplate_step: (a: number, b: number, c: number, d: number) => [number, number, number];
     readonly __externref_table_alloc: () => number;
     readonly __wbindgen_externrefs: WebAssembly.Table;
     readonly __wbindgen_malloc: (a: number, b: number) => number;

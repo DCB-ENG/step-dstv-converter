@@ -1,4 +1,4 @@
-import init,{BrowserConversion,browser_profile_sample} from './pkg/step_dstv_core.js';
+import init,{BrowserConversion,BrowserPlate,browser_plate_sample,browser_profile_sample} from './pkg/step_dstv_core.js';
 let conversion=null;
 await init();
 self.postMessage({type:'ready'});
@@ -9,9 +9,11 @@ self.onmessage=({data})=>{
   try{
     if(type==='load'){
       conversion?.free();conversion=null;
-      const text=data.sample!==undefined?browser_profile_sample(data.family??'RHS',data.sample):data.text;
+      const plate=data.inputKind!=='section';
+      const text=data.sample!==undefined?(plate?browser_plate_sample(data.family,data.inputKind==='plate-dxf'):browser_profile_sample(data.family??'RHS',data.sample)):data.text;
       loadedText=text;
-      conversion=data.detectOrientation?BrowserConversion.detected(text):new BrowserConversion(text,JSON.stringify(data.orientation));
+      const verification=JSON.stringify({mitre_tolerance_mm:data.mitreToleranceMm??0.02});
+      conversion=plate?(data.inputKind==='plate-dxf'?BrowserPlate.dxf(text,JSON.stringify(data.dxfOptions)):BrowserPlate.step(text,JSON.stringify(data.orientation))):(data.detectOrientation?BrowserConversion.detected_with_verification(text,verification):BrowserConversion.with_verification(text,JSON.stringify(data.orientation),verification));
       const mesh=JSON.parse(conversion.preview());
       loadedMesh=mesh;
       const analysis=JSON.parse(conversion.analyze());
