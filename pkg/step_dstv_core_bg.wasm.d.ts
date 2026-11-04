@@ -12,6 +12,7 @@ export const browserconversion_detected_with_verification: (a: number, b: number
 export const browserconversion_export_nc1: (a: number, b: number, c: number) => [number, number, number, number];
 export const browserconversion_new: (a: number, b: number, c: number, d: number) => [number, number, number];
 export const browserconversion_preview: (a: number) => [number, number, number, number];
+export const browserconversion_reorient_tube: (a: number, b: number, c: number) => [number, number];
 export const browserconversion_with_verification: (a: number, b: number, c: number, d: number, e: number, f: number) => [number, number, number];
 export const browserplate_analyze: (a: number) => [number, number, number, number];
 export const browserplate_dxf: (a: number, b: number, c: number, d: number) => [number, number, number];

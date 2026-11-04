@@ -130,6 +130,16 @@ export class BrowserConversion {
         }
     }
     /**
+     * @param {boolean} reverse_length
+     * @param {boolean} reverse_up
+     */
+    reorient_tube(reverse_length, reverse_up) {
+        const ret = wasm.browserconversion_reorient_tube(this.__wbg_ptr, reverse_length, reverse_up);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * @param {string} step
      * @param {string} orientation_json
      * @param {string} verification_json

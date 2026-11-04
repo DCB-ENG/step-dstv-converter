@@ -1,7 +1,7 @@
-import init,{BrowserConversion,BrowserPlate,browser_plate_sample,browser_profile_sample} from './pkg/step_dstv_core.js';
+import init,{BrowserConversion,BrowserPlate,browser_plate_sample,browser_profile_sample} from './pkg/step_dstv_core.js?build=f9745385c5e9';
 let conversion=null;
-await init();
-self.postMessage({type:'ready'});
+await init({module_or_path:new URL('./pkg/step_dstv_core_bg.wasm?build=f9745385c5e9',import.meta.url)});
+self.postMessage({type:'ready',build:'f9745385c5e9'});
 self.onmessage=({data})=>{
   const {id,type}=data;
   let loadedText;
@@ -14,6 +14,7 @@ self.onmessage=({data})=>{
       loadedText=text;
       const verification=JSON.stringify({mitre_tolerance_mm:data.mitreToleranceMm??0.02});
       conversion=plate?(data.inputKind==='plate-dxf'?BrowserPlate.dxf(text,JSON.stringify(data.dxfOptions)):BrowserPlate.step(text,JSON.stringify(data.orientation))):(data.detectOrientation?BrowserConversion.detected_with_verification(text,verification):BrowserConversion.with_verification(text,JSON.stringify(data.orientation),verification));
+      if(data.tubeReverseLength||data.tubeReverseUp){if(plate)throw Error('Tube face/end selection does not apply to plates.');conversion.reorient_tube(Boolean(data.tubeReverseLength),Boolean(data.tubeReverseUp));}
       const mesh=JSON.parse(conversion.preview());
       loadedMesh=mesh;
       const analysis=JSON.parse(conversion.analyze());

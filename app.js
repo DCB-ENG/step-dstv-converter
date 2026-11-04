@@ -1,20 +1,22 @@
-import { StepViewer } from './viewer.js';
+import { StepViewer } from './viewer.js?build=f9745385c5e9';
+const BUILD='f9745385c5e9';
 const $=id=>document.getElementById(id);
 let viewer=null;
 let worker,busy=false,ready=false,serial=0,currentText=null,mesh=null,analysis=null,view='iso';
 const orientations=()=>({length_axis:$('length-axis').value,up_axis:$('up-axis').value});
 const outputFields=['part-mark','quantity','grade','mode','profile','orientation-confirmed'];
 const defaultFaceGuide=$('face-guide').textContent;
-const sampleLabel=()=>({MITRE_WEB:'mitred I (web)',MITRE_FLANGE:'mitred I (flange)',COPE_SINGLE:'single end cope',COPE_ROUND:'rounded end cope',COPE_DOUBLE:'copes at both ends'}[$('sample-family').value]??$('sample-family').value);
+const sampleLabel=()=>({RHS_MAPPING:'RHS coordinate check',MITRE_WEB:'mitred I (web)',MITRE_FLANGE:'mitred I (flange)',COPE_SINGLE:'single end cope',COPE_ROUND:'rounded end cope',COPE_DOUBLE:'copes at both ends'}[$('sample-family').value]??$('sample-family').value);
 const inputKind=()=>$('input-kind').value;
-const dxfOptions=()=>({units:$('dxf-units').value,cutting_layer:$('cutting-layer').value,thickness_mm:Number($('plate-thickness').value)});
+const dxfOptions=()=>({units:$('dxf-units').value,cutting_layers:$('cutting-layer').value.split(/\r?\n/).filter(s=>s.length>0),thickness_mm:Number($('plate-thickness').value)});
 function eligible(){return ready&&!busy&&viewer?.available&&analysis&&$('mitre-tolerance').checkValidity()&&(!analysis.mitres||analysis.mitres.comparison_mm===Number($('mitre-tolerance').value))&&$('orientation-confirmed').checked&&$('export-form').checkValidity();}
 function controls(){
   for(const id of ['input-kind','dxf-units','plate-thickness','cutting-layer'])$(id).disabled=!ready||busy;
   for(const id of ['step-file','sample-plain','sample-holes','sample-family'])$(id).disabled=!ready||busy;
-  for(const id of ['length-axis','up-axis'])$(id).disabled=!currentText||busy||inputKind()==='plate-dxf';
+  for(const id of ['length-axis','up-axis'])$(id).disabled=!currentText||busy||inputKind()==='plate-dxf'||Boolean(analysis?.source_frame);
+  for(const id of ['tube-reverse-up','tube-reverse-length'])$(id).disabled=busy||!analysis?.tube_end_profiles;
   for(const id of ['part-mark','quantity','grade','mode'])$(id).disabled=busy;
-  $('mitre-tolerance').disabled=!ready||busy||inputKind()!=='section'||Boolean(analysis?.end_copes?.length);
+  $('mitre-tolerance').disabled=!ready||busy||inputKind()!=='section'||Boolean(analysis?.end_copes?.length)||Boolean(analysis?.tube_end_profiles);
   $('recheck-tolerance').disabled=!ready||busy||!currentText||!$('mitre-tolerance').checkValidity();
   $('orientation-confirmed').disabled=!analysis||busy||!viewer?.available;
   $('profile').disabled=!analysis||busy;
@@ -24,16 +26,18 @@ function controls(){
 function invalidate(){ $('result').hidden=true;$('nc1').textContent='';controls(); }
 function setBusy(on,message='Reading and checking geometry…') {busy=on;$('busy').hidden=!on;$('busy-message').textContent=message;controls();}
 function status(message,kind=''){$('status').textContent=message;$('status').className='status '+kind;}
-function reset(){analysis=null;mesh=null;view='iso';viewer?.clear();for(const b of document.querySelectorAll('[data-view]')){b.hidden=false;b.classList.toggle('active',b.dataset.view==='iso');}$('profile').value='';$('face-guide').textContent=defaultFaceGuide;$('orientation-confirmed').checked=false;$('hole-details').hidden=true;$('slot-details').hidden=true;$('cope-details').hidden=true;$('measurements').replaceChildren();$('verification').textContent='No geometry has been verified.';invalidate();}
+function reset(){analysis=null;mesh=null;view='iso';viewer?.clear();for(const b of document.querySelectorAll('[data-view]')){b.hidden=false;b.classList.toggle('active',b.dataset.view==='iso');}$('profile').value='';$('face-guide').textContent=defaultFaceGuide;$('orientation-confirmed').checked=false;$('hole-details').hidden=true;$('slot-details').hidden=true;$('cope-details').hidden=true;$('tube-orientation').hidden=true;$('coordinate-details').hidden=true;$('measurements').replaceChildren();$('verification').textContent='No geometry has been verified.';invalidate();}
+function resetTubeSelection(){for(const id of ['tube-reverse-up','tube-reverse-length'])$(id).checked=false;}
 function startWorker(){
-  worker=new Worker('./worker.js',{type:'module'});
+  worker=new Worker('./worker.js?build='+BUILD,{type:'module'});
   worker.onmessage=({data})=>{
-    if(data.type==='ready'){ready=true;$('engine-status').textContent='WASM ENGINE READY';controls();return;}
+    if(data.type==='ready'){if(data.build!==BUILD){status('Converter build mismatch · reload this page before converting.','error');return;}ready=true;$('engine-status').textContent='WASM ENGINE READY · '+BUILD;controls();return;}
     if(data.id!==serial)return;
     setBusy(false);
     if(data.type==='error'){if(data.text!==undefined)currentText=data.text;if(data.mesh){mesh=data.mesh;$('empty').hidden=true;viewer?.setModel(mesh,null);}status(data.message,'error');controls();return;}
     if(data.type==='loaded'){
       analysis=data.analysis;mesh=data.mesh;if(data.text!==undefined)currentText=data.text;
+      $('tube-orientation').hidden=!analysis.tube_end_profiles;showCoordinateFrames();
       $('length-axis').value=analysis.orientation.length_axis;$('up-axis').value=analysis.orientation.up_axis;
       $('empty').hidden=true;$('profile').value=analysis.suggested_profile;
       const mm=x=>Number(x).toLocaleString(undefined,{maximumFractionDigits:3})+' mm';
@@ -41,6 +45,7 @@ function startWorker(){
       const fields=[['Section',analysis.family+' · '+mm(analysis.height_mm)+' × '+mm(analysis.width_mm)],['Length',mm(analysis.length_mm)],[channel||isection?'Flange / web':tube?'Wall':'Leg thickness',channel||isection?mm(analysis.wall_mm)+' / '+mm(analysis.web_mm):mm(analysis.wall_mm)],[tube?'Outside radius':isection?'Root radius':'Root / toe radius',tube?mm(analysis.outer_radius_mm):isection?mm(analysis.inner_radius_mm):mm(analysis.inner_radius_mm)+' / '+mm(analysis.toe_radius_mm)],['Round holes',String(analysis.holes.length)],['Edge slots',String(analysis.edge_slots.length)]];
       if(analysis.family==='PLATE')fields.splice(0,fields.length,['Plate face',mm(analysis.length_mm)+' × '+mm(analysis.height_mm)],['Thickness',mm(analysis.wall_mm)],['Round through-holes',String(analysis.holes.length)],['Internal through-contours',String(analysis.internal_contours)]);
       if(analysis.end_copes?.length)fields.push(['End copes',String(analysis.end_copes.length)]);
+      if(analysis.tube_end_profiles){fields.push(['Cutting outlines','4 · H / U / V / O'],['Profile allowance','0.25 mm · ProCAM']);$('mode').value='procam';}
       if(analysis.mitres){
         fields[1][0]='Overall finished length';
         const angles=analysis.mitres.angles_deg.map(x=>(Math.abs(x)<0.0005?0:x).toFixed(3)+'°');
@@ -48,12 +53,14 @@ function startWorker(){
       }
       for(const [label,value]of fields){const row=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;row.append(dt,dd);$('measurements').append(row);}
       status(analysis.mitres&&analysis.mitres.comparison_mm!==0.02?`Geometry accounted for at ${analysis.mitres.comparison_mm} mm · ready for your orientation check`:'Geometry accounted for · ready for your orientation check','success');$('verification').textContent=analysis.verification;
-      $('face-guide').textContent=tube?'X starts at the near end. v/h are −Y/+Y; o/u are +Z/−Z. Opposite tube faces keep the same transverse direction.':isection?'I-section: V is the −Y web; H is its back for review only. O/U are the top/bottom flanges. Web coordinates rise from the bottom; both flange coordinates run from +Y toward −Y. X starts at the same member end on all three working faces.':channel?'V is the inside web; O/U are the flanges. H is the web back for review, not a machining face. Views and origins follow the detected web orientation.':'V is the vertical (longer) leg; U is the horizontal leg. Transverse coordinates start at the detected heel. U-face DSTV X = length − model X. Review both legs.';
+      $('face-guide').textContent=tube?'X starts at the near end. v/h are −Y/+Y; o/u are +Z/−Z. V/H q rises from the bottom; O/U q runs from the back toward the front. All four faces share X=0.':isection?'I-section: V is the −Y web; H is its back for review only. O/U are the top/bottom flanges. Web coordinates rise from the bottom; both flange coordinates run from +Y toward −Y. X starts at the same member end on all three working faces.':channel?'V is the inside web; O/U are the flanges. H is the web back for review. DSTV X may run opposite the aligned model X to keep the piece frame right-handed; review the coordinate table.':'V is the inside of the longer leg; U is the outside of the second leg. Both use one right-handed DSTV piece frame. Review the explicit face origins and X/q directions below.';
       if(analysis.mitres)$('face-guide').textContent+=' Mitres: X=0 is the nearest finished point, shared by all faces. Review both cut directions. No kerf or trim allowance is added.';
       if(analysis.end_copes?.length)$('face-guide').textContent+=' End copes: X=0 stays at the retained square web end. Flange outlines can start beyond that nominal origin. The coordinate table shows each back-wall X and web-floor q. Cope checks use fixed 0.002 mm comparison; the mitre control does not change it. No kerf or automatic relief is added.';
       if(analysis.family==='PLATE')$('face-guide').textContent='Plate V is the face toward −Y. NC1 X/q start at the minimum X/up of the enclosing rectangle. X increases right, q increases up in the face-on V view. No kerf is added. Check this origin and cutting direction. Camera movement does not change coordinates. Plate checks use a fixed 0.002 mm total budget; the mitre control applies to I-sections only.';
+      if(analysis.source_frame){const vec=p=>'('+p.map(v=>Number(v.toFixed(6))).join(', ')+')';$('face-guide').textContent+=' Stock-aligned preview. Original STEP length vector '+vec(analysis.source_frame.length)+'; up vector '+vec(analysis.source_frame.up)+'. Measured stock axes stay aligned; use the tube face/end choices above to change the working frame.';}
+      if(analysis.tube_end_profiles)$('face-guide').textContent+=' ProCAM four-face exterior profiles: X=0 is the nearest retained exterior point, shared by all faces. Corner envelopes are included; opposite faces keep the same q direction. The orange outline on a face view is its NC1 cutting envelope. End-wall bevel angles are not encoded. Strict output is blocked. No kerf or stock allowance is added.';
       for(const b of document.querySelectorAll('[data-view]'))b.hidden=b.dataset.view!=='iso'&&!analysis.working_faces.some(f=>f.face===b.dataset.view);
-      showHoles(analysis.holes);showSlots();showCopes();viewer?.setModel(mesh,analysis);if(analysis.family==='PLATE'||analysis.end_copes?.length)selectView('v');controls();
+      showHoles(analysis.holes);showSlots();showCopes();viewer?.setModel(mesh,analysis);if(analysis.family==='PLATE'||analysis.end_copes?.length||analysis.tube_end_profiles)selectView('v');controls();
     }else if(data.type==='exported'){
       $('nc1').textContent=data.text;$('result').hidden=false;
       const url=URL.createObjectURL(new Blob([data.text],{type:'text/plain;charset=us-ascii'}));
@@ -71,20 +78,21 @@ function load(text,{sample,name,detectOrientation=false}={}){
   $('file-name').textContent=name??$('file-name').textContent;
   $('source-note').textContent=sample!==undefined?($('sample-family').value.startsWith('MITRE_')?'Synthetic sharp-root I mitres · custom dimensions, not a catalogue UB/UC.':'Analytic sample · synthetic geometry, not an uploaded job.'):'Local file · not uploaded or stored by this converter.';
   setBusy(true);status('Reading STEP surfaces and verifying stock/cut geometry…');
-  worker.postMessage({id:++serial,type:'load',text:currentText,sample,family:$('sample-family').value,inputKind:inputKind(),dxfOptions:dxfOptions(),orientation:orientations(),detectOrientation,mitreToleranceMm:Number($('mitre-tolerance').value)});
+  worker.postMessage({id:++serial,type:'load',text:currentText,sample,family:$('sample-family').value,inputKind:inputKind(),dxfOptions:dxfOptions(),orientation:orientations(),detectOrientation,tubeReverseLength:$('tube-reverse-length').checked,tubeReverseUp:$('tube-reverse-up').checked,mitreToleranceMm:Number($('mitre-tolerance').value)});
 }
 async function fileInput(file){
   if(!file||busy)return;
   if(!/\.(step|stp|dxf)$/i.test(file.name)||file.size>10*1024*1024){reset();currentText=null;status('Choose a .step, .stp or .dxf file up to 10 MiB (DXF core limit 2 MiB).','error');controls();return;}
   if(/\.dxf$/i.test(file.name)){$('input-kind').value='plate-dxf';$('dxf-fields').hidden=false;}
   else if(inputKind()==='plate-dxf'){$('input-kind').value='plate-step';$('dxf-fields').hidden=true;}
-  try {$('length-axis').value='x';$('up-axis').value='z';load(await file.text(),{name:file.name,detectOrientation:true});}catch(error){reset();currentText=null;status(String(error),'error');controls();}
+  try {resetTubeSelection();$('length-axis').value='x';$('up-axis').value='z';load(await file.text(),{name:file.name,detectOrientation:true});}catch(error){reset();currentText=null;status(String(error),'error');controls();}
 }
 $('step-file').addEventListener('change',event=>fileInput(event.target.files[0]));
-for(const [id,holes]of [['sample-plain',false],['sample-holes',true]])$(id).addEventListener('click',()=>{const plate=$('sample-family').value.startsWith('PLATE_');if(plate){if(inputKind()!=='plate-dxf')$('input-kind').value='plate-step';$('length-axis').value='x';$('up-axis').value='z';}else $('input-kind').value='section';$('dxf-fields').hidden=inputKind()!=='plate-dxf';load(undefined,{sample:holes,name:`Analytic ${sampleLabel()} sample`});});
-for(const id of ['input-kind','dxf-units','plate-thickness','cutting-layer'])$(id).addEventListener('input',()=>{$('dxf-fields').hidden=inputKind()!=='plate-dxf';reset();status('Input settings changed · Apply & recheck, or choose a file/sample.');controls();});
+for(const [id,holes]of [['sample-plain',false],['sample-holes',true]])$(id).addEventListener('click',()=>{resetTubeSelection();$('length-axis').value='x';$('up-axis').value='z';const plate=$('sample-family').value.startsWith('PLATE_');if(plate){if(inputKind()!=='plate-dxf')$('input-kind').value='plate-step';$('length-axis').value='x';$('up-axis').value='z';}else $('input-kind').value='section';$('dxf-fields').hidden=inputKind()!=='plate-dxf';load(undefined,{sample:holes,name:`Analytic ${sampleLabel()} sample`});});
+for(const id of ['input-kind','dxf-units','plate-thickness','cutting-layer'])$(id).addEventListener('input',()=>{resetTubeSelection();$('dxf-fields').hidden=inputKind()!=='plate-dxf';reset();status('Input settings changed · Apply & recheck, or choose a file/sample.');controls();});
 $('sample-family').addEventListener('change',()=>{for(const [id,label]of [['sample-plain','Plain'],['sample-holes','Drilled']])$(id).textContent=`${label} ${sampleLabel()} sample ↗`;});
 for(const id of ['length-axis','up-axis'])$(id).addEventListener('change',()=>load(currentText));
+for(const id of ['tube-reverse-up','tube-reverse-length'])$(id).addEventListener('change',()=>load(currentText,{detectOrientation:true}));
 let toleranceHadAnalysis=false;
 $('mitre-tolerance').addEventListener('input',()=>{
   toleranceHadAnalysis=toleranceHadAnalysis||Boolean(analysis);
@@ -117,10 +125,10 @@ function showSlots(){
   $('slot-details').hidden=!slots.length;$('slots').replaceChildren();
   if(!slots.length)return;
   const rows=slots.map(s=>{
-    const x=(s.left_mm+s.right_mm)/2;
+    const x=(s.left_mm+s.right_mm)/2;const reversed=analysis.working_faces.find(g=>g.face===s.face)?.x_reversed;
     const gap=(s.right_mm-s.left_mm-2*s.radius_mm)/2;
     const width=s.face==='u'?analysis.width_mm:analysis.height_mm;
-    return [s.face,s.face==='u'?analysis.length_mm-x:x,s.right_mm-s.left_mm,width-s.center_y_mm+Math.sqrt(s.radius_mm*s.radius_mm-gap*gap),s.radius_mm];
+    return [s.face,reversed?analysis.length_mm-x:x,s.right_mm-s.left_mm,width-s.center_y_mm+Math.sqrt(s.radius_mm*s.radius_mm-gap*gap),s.radius_mm];
   }).sort((a,b)=>a[0].localeCompare(b[0])||a[1]-b[1]);
   const table=document.createElement('table');
   for(const row of [['Face','DSTV X centre (mm)','Opening width (mm)','Depth from edge (mm)','Root radius (mm)'],...rows.map(r=>r.map(v=>typeof v==='number'?v.toFixed(3):v))]){
@@ -132,6 +140,15 @@ function showCopes(){
   const rows=copes.map(c=>[c.end,c.face,c.length_mm,c.depth_mm,c.relief_radius_mm,c.end==='start'?c.length_mm:analysis.length_mm-c.length_mm,c.face==='o'?analysis.height_mm-c.depth_mm:c.depth_mm]);
   const table=document.createElement('table');
   for(const row of [['End','Flange','Setback (mm)','Depth (mm)','Relief R (mm)','Back-wall X (mm)','Web-floor q (mm)'],...rows]){const tr=document.createElement('tr');for(const value of row){const td=document.createElement(table.childElementCount?'td':'th');td.textContent=typeof value==='number'?value.toFixed(3):value;tr.append(td);}table.append(tr);}$('copes').append(table);
+}
+function showCoordinateFrames(){
+  $('coordinate-details').hidden=false;$('coordinate-table').replaceChildren();
+  const vec=p=>'('+p.map(v=>Math.abs(v)<1e-8?'0':Number(v.toFixed(3))).join(', ')+')';
+  const rows=[['Face','Model point at X=0, q=0 (mm)','X+ in model','q+ in model'],
+    ...analysis.working_faces.filter(g=>g.machining).map(g=>[g.face.toUpperCase(),vec(g.origin),vec([g.x_reversed?-1:1,0,0]),vec(g.q_direction)])];
+  const table=document.createElement('table');
+  for(const [i,row]of rows.entries()){const tr=document.createElement('tr');for(const value of row){const td=document.createElement(i?'td':'th');td.textContent=value;tr.append(td);}table.append(tr);}
+  $('coordinate-table').append(table);
 }
 function viewerFailure(message){
   $('viewer-error').textContent=message;$('viewer-error').hidden=false;controls();

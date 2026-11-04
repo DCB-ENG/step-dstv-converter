@@ -20,10 +20,10 @@ incorporating its data/drawings in software. Names are accepted only when measur
 depth, width, flange/web thickness and root radius agree. This is nominal
 identification, not certification of the member or material.
 
-The restricted Rust writer is a separate port. Existing section compatibility
-checks use a preserved Python writer as a local oracle; that baseline is
-unchanged and is not an I-section or plate oracle. New I, mitre, plate and cope
-cases have independent analytic expectations. This compatibility provenance is
+The restricted Rust writer is a separate port. Historical serialization checks
+use a preserved, unchanged Python writer for regression evidence, not as proof
+of coordinate correctness or as an I-section or plate oracle. New I, mitre, plate, cope
+and tube-profile cases have independent analytic expectations. This compatibility provenance is
 not claimed to satisfy upstream independence rules. No blanket licence for the
 older FusionDSTV package is assigned here.
 
@@ -47,12 +47,15 @@ customer STEP/NC1 files, workshop records and development/upstream checkouts.
 
 One supported solid per STEP conversion, at most 10 MiB, 512 imported faces and
 a 10 m body diagonal. Stock axes must align with selected perpendicular signed
-world axes. Importer warnings, unknown surfaces, assemblies, unaccounted cuts
-and ambiguous recognition block export. Arbitrary stock rotation, CHS, tapered
-or asymmetric I sections, blind machining and bevels remain outside this slice.
+world axes, except for the bounded measured RHS/SHS stock frame described below.
+Importer warnings, unknown surfaces, assemblies, unaccounted cuts and ambiguous
+recognition block export. General rotations, CHS, tapered/asymmetric I sections,
+blind machining and bevel-aware cutting remain outside this slice.
 
 The converter recognises current analytic surfaces and complete trim boundaries,
-reconstructs the stock and supported machining, and compares both directions.
+reconstructs the stock and supported machining, and compares both directions
+for the existing section, plate, I-mitre and I-cope paths. The separate four-face
+tube route below verifies projected exterior profiles rather than a 3D end solid.
 Meshes provide topology indices and display only. Ordinary square-section and
 cope comparison uses 0.002 mm; the inherited whole-curve projection bound is
 reported separately. It must not be interpreted as a tighter total machine
@@ -66,9 +69,42 @@ operator review. No kerf, trim allowance or material grade is inferred.
 RHS/SHS strict output uses the single V-face M-profile outline and refuses an
 unrepresentable non-V cut. Compatibility output uses one outline per physical
 tube face. Outside-radius metadata is tube-only. Channels retain V/O/U working
-faces. Angles retain V/U, with U X = length minus model X and mirrored arc signs.
+faces. All supported families now use the DSTV 7th-edition piece frame. RHS/SHS
+O/U q starts at the back edge, toward the front. Channel/angle X is shared by all
+faces in a right-handed frame; angle U is the outside of the second leg. Arc
+signs/winding are transformed consistently. Historical Fusion coordinates are
+retained only for internal writer-parity checks, not normal output.
 Up to sixteen separate round drills and sixteen bounded angle edge slots are
 supported; enclosed section pockets and other unrecognised cuts are refused.
+
+## Profiled RHS/SHS ends: four-face ProCAM route
+
+A separate bounded route measures a unique rigid stock frame, constant walls
+and all inside/outside corner pairs. It projects the current exterior flat and
+corner patches to one H/U/V/O cutting envelope per physical face. Planar carriers
+must certify complete boundary curves; unknown or nonplanar intersections are
+refused. Positive-weight rational controls bound chord subdivision, not a display
+mesh. The outside radius and opposite-face transverse conventions are preserved.
+
+This is the user-selected ProCAM exterior-profile contract, with a 0.25 mm total
+projection allowance. The source projection error, 0.002 mm carrier allowance,
+0.025 mm stroke bound, 0.002 mm joins and 0.008 mm coordinate-rounding reserve
+must fit that allowance. Actual rounded fixed-width AK records are checked for
+all four faces, closure, unique points, simple loops and geometry correspondence.
+The I-mitre tolerance control does not change this route.
+
+Limits: 128 faces, 512 edges, length 10-5000 mm and a source whole-curve bound at
+most 0.01 mm. Supported machining remains in the first/last 35% of the length.
+Every machining component must reach both skins, with supports represented at
+the exterior or matched as constant-wall/tangent cutter partners. Hidden pockets,
+separate bores, internal loops, side cuts, ambiguous frames and unknown surfaces
+are refused. Strict M output refuses these non-V external cuts.
+
+End-wall bevel angles are not encoded. This route certifies the projected
+exterior cutting envelopes, not a reconstructed 3D machined-end solid. The
+preview shows the measured source frame and an orange envelope on each face
+view; explicit orientation confirmation is required. New NC1 comments identify
+this contract. Real ProCAM/machine acceptance remains outstanding.
 
 ## Symmetric I sections and simple mitres
 
@@ -100,23 +136,26 @@ parallel broad faces. Bevels, countersinks, blind pockets and unsupported curves
 are refused.
 
 ASCII DXF is limited to 2 MiB and 256 selected entities: LINE, ARC, CIRCLE and
-closed 2D LWPOLYLINE with signed bulges. Units (mm/inch), exact cutting layer and
+closed 2D LWPOLYLINE with signed bulges. Units (mm/inch), exact cutting layers and
 positive thickness must be supplied; present nonzero INSUNITS must agree.
 Unknown selected entities/groups, gaps, crossings, touching loops, nested islands,
 nondefault OCS, elevation and wide polylines block conversion. Other layers are
-excluded by the operator's explicit cutting-layer selection.
+excluded by the operator's explicit cutting-layer selection. Select 1-16 exact
+layer names, one per line; every selected layer must have cutting entities.
 
 Selected drawing curves are checked against the constructed thickness-aware
 solid. Both input paths then use the same geometry-backed B-profile output:
 length/enclosing width, zero flange dimensions, web field = plate thickness,
 and local designation PLthickness*width. V is toward -Y; X/q start at the minimum
 X/up of the enclosing rectangle. AK is counterclockwise. Strict IK is clockwise
-with explicit first-row references; compatibility IK retains counterclockwise
-winding and no first-row suffix. Round holes use BO.
+with explicit first-row references. Compatibility IK also uses clockwise
+winding and retains no first-row suffix. Round holes use BO.
 
 Both projection bounds and comparison errors share the total 0.002 mm plate
-budget. Actual two-decimal NC1 is decoded, rebuilt and compared before download;
-excessive rounding loss blocks output. This does not add plate NC1 import,
+budget. Actual NC1 is decoded, rebuilt and compared before download. Plate
+coordinates use 2-5 decimal places as needed inside the existing fixed columns;
+two-decimal output is retained wherever it passes the same geometry check.
+Excessive rounding loss blocks output. This does not add plate NC1 import,
 nesting, bending or sheet-metal unfolding.
 
 ## Full-width I end copes

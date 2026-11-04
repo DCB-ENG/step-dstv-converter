@@ -9,3 +9,4 @@
 .navigation-bar{display:flex;align-items:center;gap:6px;padding:0 18px 8px}.navigation-bar button{background:#e1e9dc;color:#335442;border:1px solid #d1ddce;border-radius:4px;min-height:30px;min-width:32px;padding:5px 10px;font-size:11px}.navigation-bar button:hover:enabled{background:#d2e1ca}.navigation-bar button:disabled{opacity:.4}
 .viewer-help{font-size:10px;line-height:1.7;color:#64796b;margin:0;padding:0 20px 14px;max-width:650px}
 .tolerance-row{align-items:end}.tolerance-row button{margin-bottom:12px;min-height:36px}
+textarea{width:100%;border:1px solid #d5dfd3;border-radius:4px;background:#fafcf9;padding:9px;color:#294b36;font:12px system,"Segoe UI",sans-serif;margin-top:5px;resize:vertical;min-width:0}textarea:focus{outline:2px solid #82a48a;border-color:transparent}textarea:disabled{opacity:.45;cursor:not-allowed}

@@ -10,6 +10,7 @@ export class BrowserConversion {
     export_nc1(options_json: string): string;
     constructor(step: string, orientation_json: string);
     preview(): string;
+    reorient_tube(reverse_length: boolean, reverse_up: boolean): void;
     static with_verification(step: string, orientation_json: string, verification_json: string): BrowserConversion;
 }
 
@@ -45,6 +46,7 @@ export interface InitOutput {
     readonly browserconversion_export_nc1: (a: number, b: number, c: number) => [number, number, number, number];
     readonly browserconversion_new: (a: number, b: number, c: number, d: number) => [number, number, number];
     readonly browserconversion_preview: (a: number) => [number, number, number, number];
+    readonly browserconversion_reorient_tube: (a: number, b: number, c: number) => [number, number];
     readonly browserconversion_with_verification: (a: number, b: number, c: number, d: number, e: number, f: number) => [number, number, number];
     readonly browserplate_analyze: (a: number) => [number, number, number, number];
     readonly browserplate_dxf: (a: number, b: number, c: number, d: number) => [number, number, number];

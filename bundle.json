@@ -1,13 +1,14 @@
 {
   "version": "0.1.0",
+  "build": "f9745385c5e9",
   "files": [
     {
       "path": "app.js",
-      "sha256": "7e4a3fb40d97bf01cdd8847005806233b9fb4f393f729b0e38acce53ac8430ce"
+      "sha256": "664980c7ae6990719c80432987aa0f4fc7f7d632dfc7fc792ac5450133f53726"
     },
     {
       "path": "index.html",
-      "sha256": "e9e33f02a50a2744774b584d0897f3ecef34fb8cafa4e928bc65f091ffbd9dfa"
+      "sha256": "6551c252ee862f56e686e721e3cd4908eac14595e347678e6e0cea1179e926e9"
     },
     {
       "path": "LICENSE-APACHE",
@@ -23,27 +24,27 @@
     },
     {
       "path": "pkg/step_dstv_core.d.ts",
-      "sha256": "4b4b47e5cf779a6644a570e4af4c357a065eb5960d65423d0d2b19da2bf56291"
+      "sha256": "e7714b56b6a3077c366989385342ac3c01ac27fc1ef1029427061fb25991bc71"
     },
     {
       "path": "pkg/step_dstv_core.js",
-      "sha256": "17706194972d26bad2fdb9ffd48d54322bdb229d7d4d0ef2667492313ef200c4"
+      "sha256": "9ea9ef467a6bc0910355a86c98e7c3b6e78f1667620728bb2b69acaab2adfee9"
     },
     {
       "path": "pkg/step_dstv_core_bg.wasm",
-      "sha256": "0986f455537ba7373fff5683e37d28d4a17c4278a29520f8aa693d2041cd2904"
+      "sha256": "d1b058cd53cc54998101cf171b6d38b56b81db53c311efef49f60cc993f1ba7b"
     },
     {
       "path": "pkg/step_dstv_core_bg.wasm.d.ts",
-      "sha256": "5840a303f4629d42ee73dd3eb99744ea8e1d9310b4e0f066a2adf682cb51522c"
+      "sha256": "0742af67298c542152e8de5da824c35ca02236d61669a6f489a2eaad3d773652"
     },
     {
       "path": "SOURCE-NOTICE.md",
-      "sha256": "8edf1df73a615ca9cb16f9c8d2622d5b00653e599f6fc226d9ddb36970c936ba"
+      "sha256": "88ca77fce10ffe07331c98d18222d70cab10ff86a3791ef3a39e17d3a944fd9f"
     },
     {
       "path": "style.css",
-      "sha256": "c4b026a7084d199950f1c6376f502a7e6b97c28ee5a77a22e4db5f7295b475b5"
+      "sha256": "550452164554b24e26cad09b6d969c4f56233e20757953cdcb17466d6e7cf1cd"
     },
     {
       "path": "THIRD-PARTY-LICENSES.txt",
@@ -71,11 +72,11 @@
     },
     {
       "path": "viewer.js",
-      "sha256": "d0d7747e2a8d51ff22ac15547aebf70bc2a7d128f736235b3aa956486b694126"
+      "sha256": "a45cb4ec3a84a8f0666659f3c21b88e9e29e1ad728d66b81221d9744a36ccbbe"
     },
     {
       "path": "worker.js",
-      "sha256": "a8e1d7ff6b7956aa35ecc6c3087eb9d89eefd1ffe650b6394caf471a21d8ae91"
+      "sha256": "3ee262217d8a232142b76f7f1a83ce7a38958154fad90fdbeecb3c391bcc3236"
     }
   ]
 }

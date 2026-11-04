@@ -1,9 +1,24 @@
 import * as THREE from './vendor/three/three.module.js';
 import { OrbitControls } from './vendor/three/OrbitControls.js';
 
+export function facePoint(analysis,face,x,q){
+  const guide=analysis.working_faces.find(g=>g.face===face);
+  if(!guide||!guide.q_direction)throw new Error('Missing verified face coordinate frame');
+  return guide.origin.map((v,i)=>v+(i===0?(guide.x_reversed?-x:x):0)+guide.q_direction[i]*q);
+}
+export function tubeProfilePoints(analysis,contour){
+  return contour.points_mm.map(([x,q])=>facePoint(analysis,contour.face,x,q));
+}
+
 // Camera state is display-only. Never rotate the imported mesh or the NC1 frame.
 export function viewFrame(view, analysis) {
   const guide = analysis?.working_faces.find(face => face.face === view);
+  const piece=analysis?.coordinate_system;
+  if(piece&&view!=='iso'){
+    const neg=v=>v.map(x=>-x);
+    const frames={v:{direction:piece.z,up:piece.y},h:{direction:neg(piece.z),up:piece.y},o:{direction:piece.y,up:neg(piece.z)},u:{direction:neg(piece.y),up:piece.z}};
+    return {...frames[view],guide};
+  }
   const side = guide?.view ?? view;
   const frames = {
     iso: { direction: [1, -1.6, 1], up: [0, 0, 1] },
@@ -95,12 +110,22 @@ export class StepViewer {
     })));
     this.model.add(new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 28),
       new THREE.LineBasicMaterial({ color: 0x5c7d70, transparent: true, opacity: 0.45 })));
+    if(analysis?.tube_end_profiles){
+      for(const contour of analysis.ak_contours){
+        const f=contour.face;
+        const points=tubeProfilePoints(analysis,contour).map(p=>new THREE.Vector3(...p));
+        const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),
+          new THREE.LineBasicMaterial({color:0xd67743,depthTest:false}));
+        line.userData.profileFace=f;line.renderOrder=10;this.model.add(line);
+      }
+    }
     this.setView('iso');
   }
 
   setView(view) {
     if (!this.mesh || !this.available) return;
     this.view = view;
+    for(const child of this.model.children)if(child.userData.profileFace)child.visible=child.userData.profileFace===view;
     const frame = viewFrame(view, this.analysis);
     this.controls?.dispose();
     this.camera.up.fromArray(frame.up);
