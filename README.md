@@ -1,5 +1,9 @@
 # STEP / DXF to DSTV converter — experimental browser preview
 
+## [Open converter](https://dcb-eng.github.io/step-dstv-converter/)
+
+Use the converter online — no installation or GitHub account required.
+
 This repository contains the prebuilt browser app and its dependency notices.
 STEP solids and selected DXF plate outlines are processed in the visitor's browser,
 in a dedicated WASM worker.
