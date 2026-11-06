@@ -1,14 +1,26 @@
 {
   "version": "0.1.0",
-  "build": "f9745385c5e9",
+  "build": "d18dbed1d638",
   "files": [
     {
       "path": "app.js",
-      "sha256": "664980c7ae6990719c80432987aa0f4fc7f7d632dfc7fc792ac5450133f53726"
+      "sha256": "c0659bca21265878f15b6053e205674e9dd265b67ad28f6b89903475bc56248c"
+    },
+    {
+      "path": "dxf_batch.js",
+      "sha256": "9f9de425b73652c0dd4a45666db82ddb9d0fc932099cc6098be7e0da8c8c04ed"
+    },
+    {
+      "path": "dxf_preview.js",
+      "sha256": "cc4d148f0cb3e6710ac893df9072376d116a8e354ebc0c2501644a1601eb9126"
+    },
+    {
+      "path": "identical_parts.js",
+      "sha256": "d9b8161ae19b877994d42bb5e279eb66a769118b34c08166aec0c3cb1129d02b"
     },
     {
       "path": "index.html",
-      "sha256": "6551c252ee862f56e686e721e3cd4908eac14595e347678e6e0cea1179e926e9"
+      "sha256": "16c7e7d8f8d8d75e1022da3fbb1e531c32e3698cb759365fd1bc20571c21882a"
     },
     {
       "path": "LICENSE-APACHE",
@@ -19,32 +31,40 @@
       "sha256": "44cca886556f909c92e8856945be1c55371698d06d052c6fe7cee7c6fb8e316f"
     },
     {
+      "path": "nc1_zip.js",
+      "sha256": "a6d6b68ed81a78198a138c2198d7aed76b4c4b4b8405f5f0a7e48ede0b79be1d"
+    },
+    {
       "path": "NOTICE",
       "sha256": "418d110fb7dfa541d6e2a9405badfdfc2cd8b8ee762efa6e8dc10014b91b2ac3"
     },
     {
       "path": "pkg/step_dstv_core.d.ts",
-      "sha256": "e7714b56b6a3077c366989385342ac3c01ac27fc1ef1029427061fb25991bc71"
+      "sha256": "c3573331e1083d477dd2975dcf7159ec30e3afa059d3b50ecda6f68d1a016156"
     },
     {
       "path": "pkg/step_dstv_core.js",
-      "sha256": "9ea9ef467a6bc0910355a86c98e7c3b6e78f1667620728bb2b69acaab2adfee9"
+      "sha256": "ae362b6ea2358acadf97a2988b5299de181a238ffd17ba8d08c242c570defb94"
     },
     {
       "path": "pkg/step_dstv_core_bg.wasm",
-      "sha256": "d1b058cd53cc54998101cf171b6d38b56b81db53c311efef49f60cc993f1ba7b"
+      "sha256": "28bf0c0a5773882cb387d1285c9a55b9adbe55dc97fdd7f3a6b917938eababca"
     },
     {
       "path": "pkg/step_dstv_core_bg.wasm.d.ts",
-      "sha256": "0742af67298c542152e8de5da824c35ca02236d61669a6f489a2eaad3d773652"
+      "sha256": "963e9bcb3d681281de34157b7b05b58737575643bcc265d6defefca75fee1edf"
     },
     {
       "path": "SOURCE-NOTICE.md",
-      "sha256": "88ca77fce10ffe07331c98d18222d70cab10ff86a3791ef3a39e17d3a944fd9f"
+      "sha256": "fafa1f0ef350fbb58379b3ae1c60537b80d6afaadb264803398d86c890449ee1"
+    },
+    {
+      "path": "step_detection.js",
+      "sha256": "d1de0e9fd2b27d9b5e6e561e9086cb23dee84190d9e878298a2c9203e48d874f"
     },
     {
       "path": "style.css",
-      "sha256": "550452164554b24e26cad09b6d969c4f56233e20757953cdcb17466d6e7cf1cd"
+      "sha256": "5ec87b801c20d289f2d383b35e194e71a191a1baed1bc2e55f3128f4113a3c3c"
     },
     {
       "path": "THIRD-PARTY-LICENSES.txt",
@@ -72,11 +92,11 @@
     },
     {
       "path": "viewer.js",
-      "sha256": "a45cb4ec3a84a8f0666659f3c21b88e9e29e1ad728d66b81221d9744a36ccbbe"
+      "sha256": "75e062b957eb038244014b1778046b80f56ecb513c8c736fc0016e9a2b5e46b8"
     },
     {
       "path": "worker.js",
-      "sha256": "3ee262217d8a232142b76f7f1a83ce7a38958154fad90fdbeecb3c391bcc3236"
+      "sha256": "d6863ec7b548641f0b5fb83c8e269ea459ddf049f52889a3e21b36459da01bce"
     }
   ]
 }

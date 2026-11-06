@@ -279,6 +279,132 @@ export class BrowserPlate {
 }
 if (Symbol.dispose) BrowserPlate.prototype[Symbol.dispose] = BrowserPlate.prototype.free;
 
+export class BrowserPlateBatch {
+    static __wrap(ptr) {
+        const obj = Object.create(BrowserPlateBatch.prototype);
+        obj.__wbg_ptr = ptr;
+        BrowserPlateBatchFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        BrowserPlateBatchFinalization.unregister(this);
+        return ptr;
+    }
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_browserplatebatch_free(ptr, 0);
+    }
+    /**
+     * @param {number} index
+     * @returns {string}
+     */
+    analyze_part(index) {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ret = wasm.browserplatebatch_analyze_part(this.__wbg_ptr, index);
+            var ptr1 = ret[0];
+            var len1 = ret[1];
+            if (ret[3]) {
+                ptr1 = 0; len1 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred2_0 = ptr1;
+            deferred2_1 = len1;
+            return getStringFromWasm0(ptr1, len1);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
+     * @param {string} text
+     * @param {string} options_json
+     * @returns {BrowserPlateBatch}
+     */
+    static dxf(text, options_json) {
+        const ptr0 = passStringToWasm0(text, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(options_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ret = wasm.browserplatebatch_dxf(ptr0, len0, ptr1, len1);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return BrowserPlateBatch.__wrap(ret[0]);
+    }
+    /**
+     * @param {number} index
+     * @param {string} options_json
+     * @returns {string}
+     */
+    export_part(index, options_json) {
+        let deferred3_0;
+        let deferred3_1;
+        try {
+            const ptr0 = passStringToWasm0(options_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ret = wasm.browserplatebatch_export_part(this.__wbg_ptr, index, ptr0, len0);
+            var ptr2 = ret[0];
+            var len2 = ret[1];
+            if (ret[3]) {
+                ptr2 = 0; len2 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred3_0 = ptr2;
+            deferred3_1 = len2;
+            return getStringFromWasm0(ptr2, len2);
+        } finally {
+            wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
+        }
+    }
+    /**
+     * @returns {string}
+     */
+    parts() {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ret = wasm.browserplatebatch_parts(this.__wbg_ptr);
+            var ptr1 = ret[0];
+            var len1 = ret[1];
+            if (ret[3]) {
+                ptr1 = 0; len1 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred2_0 = ptr1;
+            deferred2_1 = len1;
+            return getStringFromWasm0(ptr1, len1);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
+     * @param {number} index
+     * @returns {string}
+     */
+    preview_part(index) {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ret = wasm.browserplatebatch_preview_part(this.__wbg_ptr, index);
+            var ptr1 = ret[0];
+            var len1 = ret[1];
+            if (ret[3]) {
+                ptr1 = 0; len1 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred2_0 = ptr1;
+            deferred2_1 = len1;
+            return getStringFromWasm0(ptr1, len1);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+}
+if (Symbol.dispose) BrowserPlateBatch.prototype[Symbol.dispose] = BrowserPlateBatch.prototype.free;
+
 /**
  * @param {string} kind
  * @param {boolean} dxf
@@ -422,6 +548,9 @@ const BrowserConversionFinalization = (typeof FinalizationRegistry === 'undefine
 const BrowserPlateFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_browserplate_free(ptr, 1));
+const BrowserPlateBatchFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_browserplatebatch_free(ptr, 1));
 
 function addToExternrefTable0(obj) {
     const idx = wasm.__externref_table_alloc();

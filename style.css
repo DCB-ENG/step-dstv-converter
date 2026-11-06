@@ -10,3 +10,17 @@
 .viewer-help{font-size:10px;line-height:1.7;color:#64796b;margin:0;padding:0 20px 14px;max-width:650px}
 .tolerance-row{align-items:end}.tolerance-row button{margin-bottom:12px;min-height:36px}
 textarea{width:100%;border:1px solid #d5dfd3;border-radius:4px;background:#fafcf9;padding:9px;color:#294b36;font:12px system,"Segoe UI",sans-serif;margin-top:5px;resize:vertical;min-width:0}textarea:focus{outline:2px solid #82a48a;border-color:transparent}textarea:disabled{opacity:.45;cursor:not-allowed}
+
+#dxf-preview{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}#dxf-preview:active{cursor:grabbing}#dxf-preview path{fill:none;stroke-width:1.7;vector-effect:non-scaling-stroke}#dxf-preview .drawing-layer{stroke:#315d77}#dxf-preview .cut-layer{stroke:#c36d32}#dxf-preview .other-layer{stroke:#8d9994}.drawing-notice{margin:0;padding:12px 18px;background:#fff4dd;border-top:1px solid #e1c891;color:#73521e;font-size:12px;line-height:1.6}#check-dxf{margin-bottom:10px}#dxf-layers{overflow-wrap:anywhere}#dxf-layer-summary table{font-size:10px}#dxf-layer-summary td,#dxf-layer-summary th{padding:7px 3px}
+
+.drop-zone.drawing-mode{flex:none;height:480px;min-height:340px}@media(max-width:700px){.drop-zone.drawing-mode{height:340px}}
+
+#cutting-layers{border:1px solid #d5dfd3;border-radius:4px;margin:0 0 10px;padding:8px 10px;min-width:0}#cutting-layers legend{font-size:11px;color:#5f7365;padding:0 4px}#cut-layer-options{max-height:300px;overflow-y:auto}.cut-layer-option{display:flex;align-items:flex-start;gap:9px;margin:0;padding:9px 2px;border-bottom:1px solid #edf0ea;cursor:pointer;overflow-wrap:anywhere}.cut-layer-option:last-child{border-bottom:0}.cut-layer-option input{width:16px;height:16px;flex-shrink:0;margin:1px 0;accent-color:#c36d32}.cut-layer-option strong{display:block;font-size:11px;font-weight:600}.cut-layer-option small{display:block;font-size:10px;line-height:1.5;color:#829082}#cut-layer-selection{margin:8px 0 0}
+
+#dxf-part-map{width:100%;height:150px;border:1px solid #d5dfd3;background:#f1f5ef}#dxf-part-map path{fill:none;stroke:#8d9994;stroke-width:1;vector-effect:non-scaling-stroke}.part-map-target rect{fill:#b8cbb729;stroke:#6b8971;stroke-width:1;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}.part-map-target.active rect{stroke:#c36d32;fill:#e3c4a933}.part-map-target{cursor:pointer}.part-map-target text{fill:#284c3c;font-weight:bold;paint-order:stroke;stroke:#f1f5ef;stroke-width:1}#dxf-parts{margin:15px 0}
+
+.workspace.batch-mode .model{align-self:start}.workspace.batch-mode .drop-zone:not(.drawing-mode){height:520px;flex:none}@media(max-width:700px){.workspace.batch-mode .drop-zone:not(.drawing-mode){height:340px}}
+
+@media(min-width:701px){.workspace.batch-mode{overflow:visible}.workspace.batch-mode .model{position:sticky;top:12px;border-radius:8px 0 0 8px;overflow:hidden}}
+
+#dxf-identical{padding:12px;background:#eef5eb;border:1px solid #cbdcc7;border-radius:4px;margin:0 0 16px}#dxf-identical-notice{font-size:12px;font-weight:600;line-height:1.6;margin:0 0 12px}

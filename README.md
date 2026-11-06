@@ -17,12 +17,23 @@ This is a user-maintained preview, separate from the official SolidCraft website
 
 - STEP: one axis-aligned RHS/SHS, PFC, angle or symmetric parallel-flange I solid.
   Round holes, bounded angle edge slots, simple I mitres and full-width square-end
-  I copes are supported within the documented geometry limits.
+  I copes are supported within the documented geometry limits. STEP automatically
+  checks section and flat-plate geometry; ambiguous or unsupported solids refuse output.
 - Plates: one constant-thickness STEP solid or explicitly selected 2D ASCII DXF
   cutting layers, with line/arc outlines, round holes and internal through-cuts.
-  DXF needs explicit units, exact layer names and positive thickness. The initial
-  plate limit is 400 mm diagonal. Plate records use 2-5 decimal places as needed
+  DXF shows a drawing preview before checks, with detected cutting-layer checkboxes.
+  Confirm units, cutting layers and thickness before checking cutting geometry.
+  Plate limits are 400 mm diagonal, 512 faces, 2048 edges and 512 analytic spans.
+  Plate records use 2-5 decimal places as needed
   inside fixed columns, with the same total 0.002 mm geometry check.
+- DXF batches: up to 16 disjoint plates, with a numbered layout, separate origin
+  confirmations and individual NC1/ZIP download. Matching unmarked parts can be
+  explicitly combined with detected quantities. Full contours, holes and thickness
+  must match, and every occurrence is rechecked. Keep separate is the default.
+- Machining additions: explicit SI text / closed PU contour marking, standard
+  obround and rectangular through-holes, and bounded flat-wall notches/windows.
+  The newer section-cut route needs an intact square stock end and a maximum
+  400 mm body diagonal. Unknown, blind, bevelled or ambiguous cuts remain blocked.
 - I copes: top/bottom flange copes at either/both square ends, with sharp or
   tangential circular reliefs. Partial-width, shallow flange-only, stepped,
   blind, bevelled and combined mitre/cope cuts are refused.
@@ -43,12 +54,13 @@ The preview exposes each face's zero point and positive directions. Dimension
 references, signed arcs and contour winding follow the same mapping. Historical
 Fusion mapping is preserved locally as unverified regression evidence.
 
-Software verification passed 58 native converter tests, with focused final
-winding/frame checks, eight independent standard-coordinate cases, their WASM
-comparisons and four managed-native coordinate round trips. VERIFY_PROJECT.ps1
-passed 37 Python tests and all 111 native section builds. Five actual local
-browser downloads matched native bytes. These are software results;
-real ProCAM/machine acceptance remains outstanding.
+Software verification for the 6 November 2026 release includes VERIFY_PROJECT.ps1
+(37 Python tests, all 111 native section builds and protected baseline/upstream
+checks), all 66 pre-existing converter cases, 12 final plate cases and dense-plate
+tampering checks. Four new dense-plate native/WASM comparisons, 14 existing
+plate comparisons and 12 automatic-input checks passed. Actual browser output
+matched native bytes; the previously accepted Base Main reference is unchanged.
+These are software results; ProCAM/machine acceptance of the additions is pending.
 
 ## Publish with GitHub Pages
 

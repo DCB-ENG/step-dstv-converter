@@ -122,10 +122,35 @@ export class StepViewer {
     this.setView('iso');
   }
 
+  setMarkings(marks) {
+    for(const child of [...this.model.children])if(child.userData.markingFace){child.geometry.dispose();child.material.dispose();this.model.remove(child);}
+    if(!this.analysis)return;
+    for(const mark of marks){
+      let points=[];
+      if(mark.kind==='text'){
+        const a=mark.angle_deg*Math.PI/180,u=[Math.cos(a)*mark.reserved_width_mm,Math.sin(a)*mark.reserved_width_mm],v=[-Math.sin(a)*mark.height_mm,Math.cos(a)*mark.height_mm],o=[mark.x_mm,mark.q_mm];
+        points=[o,[o[0]+u[0],o[1]+u[1]],[o[0]+u[0]+v[0],o[1]+u[1]+v[1]],[o[0]+v[0],o[1]+v[1]],o];
+      }else{
+        for(let i=0;i<mark.points_mm.length-1;i++){
+          const a=mark.points_mm[i],b=mark.points_mm[i+1],r=mark.radii_mm[i],dx=b[0]-a[0],dy=b[1]-a[1],d=Math.hypot(dx,dy);points.push(a);
+          if(r&&d>0&&d<=2*Math.abs(r)){
+            const h=Math.sqrt(Math.max(0,r*r-d*d/4))*Math.sign(r),c=[(a[0]+b[0])/2-dy/d*h,(a[1]+b[1])/2+dx/d*h],start=Math.atan2(a[1]-c[1],a[0]-c[0]),sweep=2*Math.asin(Math.min(1,d/(2*Math.abs(r))))*Math.sign(r),n=Math.max(2,Math.ceil(Math.abs(sweep)*24/Math.PI));
+            for(let j=1;j<n;j++)points.push([c[0]+Math.abs(r)*Math.cos(start+sweep*j/n),c[1]+Math.abs(r)*Math.sin(start+sweep*j/n)]);
+          }
+        }points.push(mark.points_mm.at(-1));
+      }
+      if(points.some(p=>!p||p.some(x=>!Number.isFinite(x)))||!this.analysis.working_faces.some(f=>f.face===mark.face&&f.machining))continue;
+      const world=points.map(p=>new THREE.Vector3(...facePoint(this.analysis,mark.face,p[0],p[1])));
+      const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(world),new THREE.LineBasicMaterial({color:mark.kind==='text'?0x326bc4:0xcc881c,depthTest:false}));
+      line.userData.markingFace=mark.face;line.renderOrder=12;line.visible=this.view==='iso'||this.view===mark.face;this.model.add(line);
+    }this.render();
+  }
+
   setView(view) {
     if (!this.mesh || !this.available) return;
     this.view = view;
     for(const child of this.model.children)if(child.userData.profileFace)child.visible=child.userData.profileFace===view;
+    for(const child of this.model.children)if(child.userData.markingFace)child.visible=view==='iso'||child.userData.markingFace===view;
     const frame = viewFrame(view, this.analysis);
     this.controls?.dispose();
     this.camera.up.fromArray(frame.up);

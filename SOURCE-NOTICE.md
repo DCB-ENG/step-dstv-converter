@@ -1,5 +1,60 @@
 # STEP / DXF to DSTV — experimental browser converter
 
+6 November 2026: the user explicitly approved updating the public converter to
+this verified version. The following review notes describe features included
+in the approved browser bundle. ProCAM/machine acceptance of these additions
+remains pending; publication does not establish machining acceptance.
+
+Dense-plate follow-up: the bounded plate path accepts up to 512 faces and
+2048 edges, retaining 512 analytic spans, 32 internal loops and a 400 mm body
+diagonal. Plates above the former topology limits require strictly axial through-thickness
+surfaces. Both original broad-face boundaries are compared directly with actual
+decoded NC1 contours; thickness rounding, axis error and both projection bounds
+share the unchanged total 0.002 mm budget. Current-solid and decoded-solid
+support/trim reconstruction still run. Earlier small-plate output is unchanged.
+Unsupported geometry stays blocked. These are software verification results.
+
+Local identical-part review: checked unmarked DXF parts can be explicitly
+combined after complete analytic geometry/thickness matching in their current
+orientation. Every original occurrence still requires review and native export
+verification; verified output bytes must agree before duplicates are omitted.
+Quantities are summed without changing the geometry or writer tolerance. Keep
+separate is the default. This grouping layer has no new machine acceptance.
+
+Local separate-part review: selected DXF layers can contain up to 16 disjoint
+plates. Intersections, touching contours, gaps and nested islands are refused.
+Every part is independently reconstructed, verified and assigned a local origin.
+The preview exposes original drawing bounds and separate orientation checks.
+ZIP download produces one unmarked NC1 per confirmed part; individual marking
+remains available. Optional duplicate grouping is described above; STEP assembly
+splitting remains unsupported. ProCAM/machine acceptance remains pending.
+
+Local layer-selection follow-up: detected DXF layers are chosen with checkboxes
+and highlighted in the drawing. No layers are preselected, and opening a new
+file clears the selection. Changing a selection clears cutting approval.
+The unchanged geometry reader independently verifies every selected layer.
+
+Local drawing review, 6 November: DXF loads show an unverified XY outline
+preview before plate checks. Layer coverage and omitted entities are listed;
+text is not drawn. Explicit Check DXF still uses the unchanged conservative
+Rust geometry reader. The drawing preview never supplies cutting geometry to
+the writer. Failed checks keep the drawing visible and block NC1 export.
+
+Local input review, 6 November: STEP automatically checks both supported steel
+section and flat-plate geometry categories, accepting exactly one. Ambiguous or
+unsupported solids block export. DXF uses the separate plate/batch path with
+explicit units, thickness and cutting layers. This browser-only routing change
+does not change the geometry runtime, writers or their verification limits.
+
+Local feature review, 5 November: optional SI text and closed PU contour marking,
+standard obround/rectangular BO holes and a 400 mm-diagonal flat-wall section-cut
+slice are available in this build. Markings are explicit operator input,
+checked against current material; the SI preview reserves a machine-font box.
+New machining requires an intact square stock end and full source/rounded-NC1
+reconstruction. Unsupported or ambiguous geometry remains refused. Existing
+longer tube/cope routes retain their own limits. These new features have not
+received ProCAM/machine acceptance.
+
 This is a user-maintained preview, separate from the official SolidCraft website.
 It processes files locally in a browser worker. No conversion backend or file
 upload service is included. Publication to SolidCraft upstream requires separate
@@ -130,8 +185,8 @@ is used where a plane-cut Boolean was insufficiently accurate for rounded roots.
 
 One flat constant-thickness plate with an external line/arc outline, round
 through-holes and closed internal through-cuts. Initial budgets are 400 mm body
-diagonal, 0.1-200 mm thickness smaller than both broad-face spans, 256 faces,
-1024 edges, 512 analytic spans and 32 internal loops. STEP requires two unsplit
+diagonal, 0.1-200 mm thickness smaller than both broad-face spans, 512 faces,
+2048 edges, 512 analytic spans and 32 internal loops. STEP requires two unsplit
 parallel broad faces. Bevels, countersinks, blind pockets and unsupported curves
 are refused.
 

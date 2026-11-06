@@ -25,6 +25,17 @@ export class BrowserPlate {
     static step(text: string, orientation_json: string): BrowserPlate;
 }
 
+export class BrowserPlateBatch {
+    private constructor();
+    free(): void;
+    [Symbol.dispose](): void;
+    analyze_part(index: number): string;
+    static dxf(text: string, options_json: string): BrowserPlateBatch;
+    export_part(index: number, options_json: string): string;
+    parts(): string;
+    preview_part(index: number): string;
+}
+
 export function browser_plate_sample(kind: string, dxf: boolean): string;
 
 export function browser_profile_sample(family: string, with_holes: boolean): string;
@@ -37,6 +48,7 @@ export interface InitOutput {
     readonly memory: WebAssembly.Memory;
     readonly __wbg_browserconversion_free: (a: number, b: number) => void;
     readonly __wbg_browserplate_free: (a: number, b: number) => void;
+    readonly __wbg_browserplatebatch_free: (a: number, b: number) => void;
     readonly browser_plate_sample: (a: number, b: number, c: number) => [number, number, number, number];
     readonly browser_profile_sample: (a: number, b: number, c: number) => [number, number, number, number];
     readonly browser_sample: (a: number) => [number, number, number, number];
@@ -53,6 +65,11 @@ export interface InitOutput {
     readonly browserplate_export_nc1: (a: number, b: number, c: number) => [number, number, number, number];
     readonly browserplate_preview: (a: number) => [number, number, number, number];
     readonly browserplate_step: (a: number, b: number, c: number, d: number) => [number, number, number];
+    readonly browserplatebatch_analyze_part: (a: number, b: number) => [number, number, number, number];
+    readonly browserplatebatch_dxf: (a: number, b: number, c: number, d: number) => [number, number, number];
+    readonly browserplatebatch_export_part: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+    readonly browserplatebatch_parts: (a: number) => [number, number, number, number];
+    readonly browserplatebatch_preview_part: (a: number, b: number) => [number, number, number, number];
     readonly __externref_table_alloc: () => number;
     readonly __wbindgen_externrefs: WebAssembly.Table;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
