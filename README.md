@@ -15,10 +15,19 @@ This is a user-maintained preview, separate from the official SolidCraft website
 
 ## Supported conversion paths
 
-- STEP: one axis-aligned RHS/SHS, PFC, angle or symmetric parallel-flange I solid.
-  Round holes, bounded angle edge slots, simple I mitres and full-width square-end
-  I copes are supported within the documented geometry limits. STEP automatically
+- STEP: axis-aligned RHS/SHS, PFC, angle or symmetric parallel-flange I solids.
+  Round holes, bounded angle edge slots, simple/compound planar I mitres and
+  full-width square-end I copes are supported within the documented geometry
+  limits. STEP automatically
   checks section and flat-plate geometry; ambiguous or unsupported solids refuse output.
+- STEP assemblies: up to 16 solid occurrences, including nested rigid product
+  placements. Each member is retained, reviewed and verified independently in
+  its part frame, with individual NC1 and complete ZIP output. Unsupported members
+  remain listed and block complete ZIP export. Occurrences stay separate;
+  assembly quantity grouping and non-rigid/mirrored placements are refused.
+- Recognition: rounded angle toes at half the leg thickness use complete boundary
+  curves to disambiguate coincident corner circles. Failures retain per-axis
+  geometry diagnostics, and the preview stays beside the measured dimensions.
 - Plates: one constant-thickness STEP solid or explicitly selected 2D ASCII DXF
   cutting layers, with line/arc outlines, round holes and internal through-cuts.
   DXF shows a drawing preview before checks, with detected cutting-layer checkboxes.
@@ -54,13 +63,17 @@ The preview exposes each face's zero point and positive directions. Dimension
 references, signed arcs and contour winding follow the same mapping. Historical
 Fusion mapping is preserved locally as unverified regression evidence.
 
-Software verification for the 6 November 2026 release includes VERIFY_PROJECT.ps1
-(37 Python tests, all 111 native section builds and protected baseline/upstream
-checks), all 66 pre-existing converter cases, 12 final plate cases and dense-plate
-tampering checks. Four new dense-plate native/WASM comparisons, 14 existing
-plate comparisons and 12 automatic-input checks passed. Actual browser output
-matched native bytes; the previously accepted Base Main reference is unchanged.
-These are software results; ProCAM/machine acceptance of the additions is pending.
+Software verification for the reviewed 9 November 2026 release includes
+VERIFY_PROJECT.ps1 (37 Python tests, all 111 native section builds and protected
+baseline/upstream checks), all 79 native converter tests and the complete
+independent export, JavaScript and WASM regression suites. Twenty compound I-end
+and six assembly native/WASM byte comparisons passed. Half-thickness angle
+strict/ProCAM outputs match independently calculated complete NC1 references;
+actual browser downloads match those references. Automatic input classification,
+confirmation gates, unsupported-geometry refusal and the previously accepted
+Base Main reference remain verified. The final preview layout passed camera-fit
+and visual checks. These are software results; new ProCAM/machine acceptance
+remains pending.
 
 ## Publish with GitHub Pages
 

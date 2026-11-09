@@ -1,14 +1,14 @@
 {
   "version": "0.1.0",
-  "build": "d18dbed1d638",
+  "build": "78cbad292e4b",
   "files": [
     {
       "path": "app.js",
-      "sha256": "c0659bca21265878f15b6053e205674e9dd265b67ad28f6b89903475bc56248c"
+      "sha256": "2d327284a203b68568b39aeac661be169d34df422166f9bd7ccd103032c97ce7"
     },
     {
       "path": "dxf_batch.js",
-      "sha256": "9f9de425b73652c0dd4a45666db82ddb9d0fc932099cc6098be7e0da8c8c04ed"
+      "sha256": "6e9280b300d756338d8fee4cf819c363168c63c1452607bb8b0ec46bdfe2d07d"
     },
     {
       "path": "dxf_preview.js",
@@ -20,7 +20,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "16c7e7d8f8d8d75e1022da3fbb1e531c32e3698cb759365fd1bc20571c21882a"
+      "sha256": "8bca789d55b9ac22c7a68af76df910377252a1d5e372e57773da886b9161330e"
     },
     {
       "path": "LICENSE-APACHE",
@@ -40,31 +40,31 @@
     },
     {
       "path": "pkg/step_dstv_core.d.ts",
-      "sha256": "c3573331e1083d477dd2975dcf7159ec30e3afa059d3b50ecda6f68d1a016156"
+      "sha256": "720ffe7e3e31bbb4576f36bb2b721b75fa5ca8b61ea888c2f92c8fef0c803e6d"
     },
     {
       "path": "pkg/step_dstv_core.js",
-      "sha256": "ae362b6ea2358acadf97a2988b5299de181a238ffd17ba8d08c242c570defb94"
+      "sha256": "bfc160ebc925024c2f33475bcf780bd7b3ad00cd1feb0e76d187b9175edd33c5"
     },
     {
       "path": "pkg/step_dstv_core_bg.wasm",
-      "sha256": "28bf0c0a5773882cb387d1285c9a55b9adbe55dc97fdd7f3a6b917938eababca"
+      "sha256": "94216899b0e26875abf26ab80e08371b09abd943410ce334d4cfd06355801ab9"
     },
     {
       "path": "pkg/step_dstv_core_bg.wasm.d.ts",
-      "sha256": "963e9bcb3d681281de34157b7b05b58737575643bcc265d6defefca75fee1edf"
+      "sha256": "fab0d018bd6a3f1b00d4afd8e44e0299b1e69e2141fcfc49052543054f22abbc"
     },
     {
       "path": "SOURCE-NOTICE.md",
-      "sha256": "fafa1f0ef350fbb58379b3ae1c60537b80d6afaadb264803398d86c890449ee1"
+      "sha256": "824321848c84585800ad1ab1627429d7cd66dc08526b4dd773fd008f027e7e41"
     },
     {
       "path": "step_detection.js",
-      "sha256": "d1de0e9fd2b27d9b5e6e561e9086cb23dee84190d9e878298a2c9203e48d874f"
+      "sha256": "ac05080681d765f2d2384ca2afae929d052abaf7022b1c858943ccce9471e94b"
     },
     {
       "path": "style.css",
-      "sha256": "5ec87b801c20d289f2d383b35e194e71a191a1baed1bc2e55f3128f4113a3c3c"
+      "sha256": "777208e56e7d7582db8f0f8f5a20d5292338fb29e8cac6a730563fa92bf8e438"
     },
     {
       "path": "THIRD-PARTY-LICENSES.txt",
@@ -92,11 +92,11 @@
     },
     {
       "path": "viewer.js",
-      "sha256": "75e062b957eb038244014b1778046b80f56ecb513c8c736fc0016e9a2b5e46b8"
+      "sha256": "412b83612909dd5890f7630791d68b827a641ec3345af973f3658ca127a7f5df"
     },
     {
       "path": "worker.js",
-      "sha256": "d6863ec7b548641f0b5fb83c8e269ea459ddf049f52889a3e21b36459da01bce"
+      "sha256": "726b48ff9aff6bf62d009519094a652767d8d579f5b986094a0e77102269f1e4"
     }
   ]
 }

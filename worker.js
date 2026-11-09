@@ -1,11 +1,11 @@
-import init,{BrowserConversion,BrowserPlate,BrowserPlateBatch,browser_plate_sample,browser_profile_sample} from './pkg/step_dstv_core.js?build=d18dbed1d638';
-import {detectStep} from './step_detection.js?build=d18dbed1d638';
-import {parseDxfPreview} from './dxf_preview.js?build=d18dbed1d638';
-import {identicalPartGroups,exportBatchFiles} from './identical_parts.js?build=d18dbed1d638';
-let conversion=null,batch=null,parts=[],activePart=0;
-function clearConversion(){conversion?.free();conversion=null;batch=null;parts=[];activePart=0;}
-await init({module_or_path:new URL('./pkg/step_dstv_core_bg.wasm?build=d18dbed1d638',import.meta.url)});
-self.postMessage({type:'ready',build:'d18dbed1d638'});
+import init,{BrowserConversion,BrowserPlate,BrowserPlateBatch,BrowserStepAssembly,browser_assembly_sample,browser_plate_sample,browser_profile_sample} from './pkg/step_dstv_core.js?build=78cbad292e4b';
+import {detectStep} from './step_detection.js?build=78cbad292e4b';
+import {parseDxfPreview} from './dxf_preview.js?build=78cbad292e4b';
+import {identicalPartGroups,exportBatchFiles} from './identical_parts.js?build=78cbad292e4b';
+let conversion=null,batch=null,parts=[],activePart=0,batchKind=null;
+function clearConversion(){conversion?.free();conversion=null;batch=null;parts=[];activePart=0;batchKind=null;}
+await init({module_or_path:new URL('./pkg/step_dstv_core_bg.wasm?build=78cbad292e4b',import.meta.url)});
+self.postMessage({type:'ready',build:'78cbad292e4b'});
 self.onmessage=({data})=>{
   const {id,type}=data;
   let loadedText;
@@ -17,7 +17,7 @@ self.onmessage=({data})=>{
       const dxf=data.inputKind==='plate-dxf';
       const samplePlate=String(data.family).startsWith('PLATE_');
       if(dxf&&data.sample!==undefined&&!samplePlate)throw Error('Choose a plate sample for the DXF path.');
-      const text=data.sample!==undefined?(samplePlate?browser_plate_sample(data.family,dxf):browser_profile_sample(data.family??'RHS',data.sample)):data.text;
+      const text=data.sample!==undefined?(data.family==='ASSEMBLY'?browser_assembly_sample(data.sample):samplePlate?browser_plate_sample(data.family,dxf):browser_profile_sample(data.family??'RHS',data.sample)):data.text;
       loadedText=text;
       let analysis,detectedKind;
       if(dxf){
@@ -31,7 +31,7 @@ self.onmessage=({data})=>{
         if(!['mm','inch'].includes(options?.units)||!Number.isFinite(options?.thickness_mm)||options.thickness_mm<0.1||options.thickness_mm>200||!layers.length||layers.length>16||layers.some(layer=>typeof layer!=='string'||!layer.trim())){
           self.postMessage({id,type:'input-required',text:loadedText,message:'DXF is not checked. Confirm units, plate thickness and cutting layers, then choose Check DXF.'});return;
         }
-        batch=BrowserPlateBatch.dxf(text,JSON.stringify(options));
+        batchKind="dxf";batch=BrowserPlateBatch.dxf(text,JSON.stringify(options));
         // Install ownership before any later method can throw.
         conversion={free:()=>batch?.free(),analyze:()=>batch.analyze_part(activePart),preview:()=>batch.preview_part(activePart),export_nc1:options=>batch.export_part(activePart,options)};
         parts=JSON.parse(batch.parts());
@@ -39,19 +39,32 @@ self.onmessage=({data})=>{
         analysis=JSON.parse(conversion.analyze());detectedKind='plate';
       }
       else{
+        batchKind='step';batch=BrowserStepAssembly.step(text,JSON.stringify({mitre_tolerance_mm:data.mitreToleranceMm??0.02}));
+        if(batch){
+        conversion={free:()=>batch?.free(),analyze:()=>batch.analyze_part(activePart),preview:()=>batch.preview_part(activePart),export_nc1:options=>batch.export_part(activePart,options)};
+        parts=JSON.parse(batch.parts());
+          activePart=0;
+          if(parts[0].error){self.postMessage({id,type:'part-blocked',parts,activePart,message:parts[0].error});return;}
+          analysis=JSON.parse(conversion.analyze());detectedKind=parts[0].kind;
+        }else{
+        conversion=null;batch=null;batchKind=null;parts=[];
         const selected=detectStep(text,{orientation:data.orientation,detectOrientation:data.detectOrientation,verification:{mitre_tolerance_mm:data.mitreToleranceMm??0.02}},{BrowserConversion,BrowserPlate});
         conversion=selected.conversion;analysis=selected.analysis;detectedKind=selected.kind;
+        }
       }
+      if((data.tubeReverseLength||data.tubeReverseUp)&&batchKind==='step')throw Error('Assembly members use their detected part frame.');
       if(data.tubeReverseLength||data.tubeReverseUp){if(detectedKind==='plate')throw Error('Tube face/end selection does not apply to plates.');conversion.reorient_tube(Boolean(data.tubeReverseLength),Boolean(data.tubeReverseUp));analysis=JSON.parse(conversion.analyze());}
       const mesh=JSON.parse(conversion.preview());
       loadedMesh=mesh;
-      self.postMessage({id,type:'loaded',analysis,mesh,detectedKind,parts,identicalGroups:parts.length>1?identicalPartGroups(parts):[],activePart,text:data.sample!==undefined?text:undefined});
+      self.postMessage({id,type:'loaded',analysis,mesh,detectedKind,parts,identicalGroups:parts.length>1?(batchKind==='step'?parts.map((_,i)=>[i]):identicalPartGroups(parts)):[],activePart,text:data.sample!==undefined?text:undefined});
     }else if(type==='select-part'){
-      if(!batch||!Number.isInteger(data.index)||data.index<0||data.index>=parts.length)throw Error('Choose a detected DXF part.');
+      if(!batch||!Number.isInteger(data.index)||data.index<0||data.index>=parts.length)throw Error('Choose a detected part.');
       activePart=data.index;
-      self.postMessage({id,type:'loaded',analysis:JSON.parse(conversion.analyze()),mesh:JSON.parse(conversion.preview()),detectedKind:'plate',activePart});
+      if(parts[activePart].error){self.postMessage({id,type:'part-blocked',activePart,message:parts[activePart].error});return;}
+      self.postMessage({id,type:'loaded',analysis:JSON.parse(conversion.analyze()),mesh:JSON.parse(conversion.preview()),detectedKind:batchKind==='step'?parts[activePart].kind:'plate',activePart});
     }else if(type==='export-batch'){
-      if(!batch||!Array.isArray(data.options)||data.options.length!==parts.length)throw Error('Check the complete DXF batch first.');
+      if(!batch||!Array.isArray(data.options)||data.options.length!==parts.length)throw Error('Check the complete batch first.');
+      if(batchKind==='step'&&data.combineIdentical)throw Error('Assembly occurrences stay separate; grouping is not supported.');
       const files=exportBatchFiles(batch,data.options,data.combineIdentical===true);
       self.postMessage({id,type:'batch-exported',files,combined:data.combineIdentical===true});
     }else if(type==='export'){
@@ -60,6 +73,6 @@ self.onmessage=({data})=>{
     }else throw new Error('Unknown converter request.');
   }catch(error){
     if(type==='load'||type==='select-part'){clearConversion();}
-    self.postMessage({id,type:'error',clearParts:type==='select-part',message:String(error),text:loadedText,mesh:loadedMesh??error?.previewMesh});
+    self.postMessage({id,type:'error',clearParts:type==='select-part',message:String(error),recognitionChecks:error?.recognitionChecks,text:loadedText,mesh:loadedMesh??error?.previewMesh});
   }
 };

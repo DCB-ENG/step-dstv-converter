@@ -19,8 +19,13 @@ textarea{width:100%;border:1px solid #d5dfd3;border-radius:4px;background:#fafcf
 
 #dxf-part-map{width:100%;height:150px;border:1px solid #d5dfd3;background:#f1f5ef}#dxf-part-map path{fill:none;stroke:#8d9994;stroke-width:1;vector-effect:non-scaling-stroke}.part-map-target rect{fill:#b8cbb729;stroke:#6b8971;stroke-width:1;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}.part-map-target.active rect{stroke:#c36d32;fill:#e3c4a933}.part-map-target{cursor:pointer}.part-map-target text{fill:#284c3c;font-weight:bold;paint-order:stroke;stroke:#f1f5ef;stroke-width:1}#dxf-parts{margin:15px 0}
 
-.workspace.batch-mode .model{align-self:start}.workspace.batch-mode .drop-zone:not(.drawing-mode){height:520px;flex:none}@media(max-width:700px){.workspace.batch-mode .drop-zone:not(.drawing-mode){height:340px}}
+.workspace:is(.batch-mode,.compound-mode) .model{align-self:start}.workspace:is(.batch-mode,.compound-mode) .drop-zone:not(.drawing-mode){height:520px;flex:none}@media(max-width:700px){.workspace:is(.batch-mode,.compound-mode) .drop-zone:not(.drawing-mode){height:340px}}
 
-@media(min-width:701px){.workspace.batch-mode{overflow:visible}.workspace.batch-mode .model{position:sticky;top:12px;border-radius:8px 0 0 8px;overflow:hidden}}
+@media(min-width:701px){.workspace:is(.batch-mode,.compound-mode){overflow:visible}.workspace:is(.batch-mode,.compound-mode) .model{position:sticky;top:12px;border-radius:8px 0 0 8px;overflow:hidden}}
 
 #dxf-identical{padding:12px;background:#eef5eb;border:1px solid #cbdcc7;border-radius:4px;margin:0 0 16px}#dxf-identical-notice{font-size:12px;font-weight:600;line-height:1.6;margin:0 0 12px}
+#assembly-member-detail{white-space:pre-wrap;overflow-wrap:anywhere;max-height:180px;background:#eef3e9;color:#36503b;padding:10px;font:10px/1.7 system-ui,sans-serif}
+
+#recognition-details{margin:12px 0;padding:10px;border:1px solid #e9b6a5;border-radius:4px;font-size:11px;line-height:1.6}#recognition-details summary{cursor:pointer;color:#9f4932}#recognition-checks{max-height:280px;overflow-y:auto;overflow-wrap:anywhere}#recognition-checks>div{padding:8px 0;border-top:1px solid #edf0ea}#recognition-checks p{margin:4px 0}
+
+.workspace .model{align-self:start}.workspace .drop-zone:not(.drawing-mode){height:520px;flex:none}@media(max-width:700px){.workspace .drop-zone:not(.drawing-mode){height:340px}}

@@ -10,6 +10,7 @@ export class BrowserConversion {
     export_nc1(options_json: string): string;
     constructor(step: string, orientation_json: string);
     preview(): string;
+    recognition_diagnostics(): string;
     reorient_tube(reverse_length: boolean, reverse_up: boolean): void;
     static with_verification(step: string, orientation_json: string, verification_json: string): BrowserConversion;
 }
@@ -36,6 +37,19 @@ export class BrowserPlateBatch {
     preview_part(index: number): string;
 }
 
+export class BrowserStepAssembly {
+    private constructor();
+    free(): void;
+    [Symbol.dispose](): void;
+    analyze_part(index: number): string;
+    export_part(index: number, options_json: string): string;
+    parts(): string;
+    preview_part(index: number): string;
+    static step(text: string, verification_json: string): BrowserStepAssembly | undefined;
+}
+
+export function browser_assembly_sample(blocked: boolean): string;
+
 export function browser_plate_sample(kind: string, dxf: boolean): string;
 
 export function browser_profile_sample(family: string, with_holes: boolean): string;
@@ -49,6 +63,8 @@ export interface InitOutput {
     readonly __wbg_browserconversion_free: (a: number, b: number) => void;
     readonly __wbg_browserplate_free: (a: number, b: number) => void;
     readonly __wbg_browserplatebatch_free: (a: number, b: number) => void;
+    readonly __wbg_browserstepassembly_free: (a: number, b: number) => void;
+    readonly browser_assembly_sample: (a: number) => [number, number, number, number];
     readonly browser_plate_sample: (a: number, b: number, c: number) => [number, number, number, number];
     readonly browser_profile_sample: (a: number, b: number, c: number) => [number, number, number, number];
     readonly browser_sample: (a: number) => [number, number, number, number];
@@ -58,6 +74,7 @@ export interface InitOutput {
     readonly browserconversion_export_nc1: (a: number, b: number, c: number) => [number, number, number, number];
     readonly browserconversion_new: (a: number, b: number, c: number, d: number) => [number, number, number];
     readonly browserconversion_preview: (a: number) => [number, number, number, number];
+    readonly browserconversion_recognition_diagnostics: (a: number) => [number, number, number, number];
     readonly browserconversion_reorient_tube: (a: number, b: number, c: number) => [number, number];
     readonly browserconversion_with_verification: (a: number, b: number, c: number, d: number, e: number, f: number) => [number, number, number];
     readonly browserplate_analyze: (a: number) => [number, number, number, number];
@@ -70,12 +87,17 @@ export interface InitOutput {
     readonly browserplatebatch_export_part: (a: number, b: number, c: number, d: number) => [number, number, number, number];
     readonly browserplatebatch_parts: (a: number) => [number, number, number, number];
     readonly browserplatebatch_preview_part: (a: number, b: number) => [number, number, number, number];
+    readonly browserstepassembly_analyze_part: (a: number, b: number) => [number, number, number, number];
+    readonly browserstepassembly_export_part: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+    readonly browserstepassembly_parts: (a: number) => [number, number, number, number];
+    readonly browserstepassembly_preview_part: (a: number, b: number) => [number, number, number, number];
+    readonly browserstepassembly_step: (a: number, b: number, c: number, d: number) => [number, number, number];
     readonly __externref_table_alloc: () => number;
     readonly __wbindgen_externrefs: WebAssembly.Table;
-    readonly __wbindgen_malloc: (a: number, b: number) => number;
-    readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __externref_table_dealloc: (a: number) => void;
     readonly __wbindgen_free: (a: number, b: number, c: number) => void;
+    readonly __wbindgen_malloc: (a: number, b: number) => number;
+    readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_start: () => void;
 }
 

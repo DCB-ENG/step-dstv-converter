@@ -1,5 +1,32 @@
 # STEP / DXF to DSTV — experimental browser converter
 
+9 November 2026 publication approval: after reviewing the local browser build,
+the user explicitly requested committing it to GitHub. Build `78cbad292e4b`
+includes the assembly and compound I-end scopes below, the half-thickness angle
+toe recognition fix, per-axis failure diagnostics and the bounded preview layout.
+Rounded-corner ambiguity is resolved using the actual complete boundary curves;
+current-solid and rounded-output verification remain mandatory. The software
+checks passed all 79 converter tests, all 111 native section builds, independent
+NC1 comparisons and browser/WASM checks. No new ProCAM/machine acceptance is claimed.
+
+9 November 2026 compound-cut scope: planar I ends may have nonzero web
+and flange slopes at either/both ends. Total 3D inclination is limited to 65°;
+both signed projected angles are retained in the existing header representation.
+The current solid and actual rounded NC1 must pass the same selected mitre budget.
+Source spline certification is unchanged. Multi-plane ends, combined cope/mitres,
+weld preparations and other section families are not added. New machine
+acceptance remains pending.
+
+9 November 2026 assembly scope: up to 16 STEP solid occurrences retain
+their names, paths and nested rigid product placements. Each retained B-rep is
+verified independently in its part frame. Individual NC1 and complete unmarked
+ZIP downloads require explicit member orientation checks; unsupported members
+remain listed and block the complete ZIP. No assembly quantity grouping or new
+compound-cut geometry is added. Assembly spline evidence and non-rigid/mirrored
+placements remain blocked. Single-solid conversion retains its established path.
+The 9 November approval above includes this browser assembly slice. The
+6 November approval below records the preceding hosted release.
+
 6 November 2026: the user explicitly approved updating the public converter to
 this verified version. The following review notes describe features included
 in the approved browser bundle. ProCAM/machine acceptance of these additions
@@ -26,8 +53,9 @@ plates. Intersections, touching contours, gaps and nested islands are refused.
 Every part is independently reconstructed, verified and assigned a local origin.
 The preview exposes original drawing bounds and separate orientation checks.
 ZIP download produces one unmarked NC1 per confirmed part; individual marking
-remains available. Optional duplicate grouping is described above; STEP assembly
-splitting remains unsupported. ProCAM/machine acceptance remains pending.
+remains available. Optional duplicate grouping is described above; the newer
+STEP assembly slice is described at the top of this notice. ProCAM/machine
+acceptance remains pending.
 
 Local layer-selection follow-up: detected DXF layers are chosen with checkboxes
 and highlighted in the drawing. No layers are preselected, and opening a new
@@ -169,9 +197,10 @@ bottom stock edge; O/U q runs from +Y toward -Y. All faces share the same X datu
 the angle U mirror does not apply. References are u on V and s on O/U in both
 modes. Markings, grade and nominal mass are not recovered from STEP.
 
-Simple planar I mitres at either or both ends extend through 65 degrees from
-square. Restricted rational spline roots and bounded small end remnants have
-whole-net/curve checks. Compound mitres and weld preparations remain unsupported.
+Simple and compound planar I mitres at either or both ends extend through 65
+degrees total inclination from square. Restricted rational spline roots and
+bounded small end remnants have whole-net/curve checks. Multi-plane ends,
+combined cope/mitres and weld preparations remain unsupported.
 The total mitre comparison allowance is adjustable from 0.002 to 1.000 mm,
 default 0.020 mm. Larger values permit larger discrepancies. Source geometry and
 actual rounded NC1 must pass the same selected allowance, including projection

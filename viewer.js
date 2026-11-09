@@ -178,6 +178,8 @@ export class StepViewer {
 
   fit() {
     if (!this.mesh || !this.available) return;
+    // Read the current canvas size after a review layout changes its height.
+    this.resize();
     const offset = this.camera.position.clone().sub(this.controls.target).normalize();
     this.controls.target.copy(this.center());
     this.camera.position.copy(this.controls.target).add(offset.multiplyScalar(this.radius() * 3));

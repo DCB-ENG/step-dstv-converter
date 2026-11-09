@@ -20,12 +20,17 @@ export function verifiedKind(section,plate){
 export function detectStep(text,{orientation={length_axis:'x',up_axis:'z'},detectOrientation=true,verification={mitre_tolerance_mm:0.02}}={},api){
   const verificationJson=JSON.stringify(verification);
   let section=null,sectionAnalysis=null,sectionError='',plate=null,plateAnalysis=null;
-  const plateErrors=[];
+  const plateErrors=[],checks=[];
   try{
     try{
       section=api.BrowserConversion.detected_with_verification(text,verificationJson);
       sectionAnalysis=JSON.parse(section.analyze());
-    }catch(error){sectionError=message(error);}
+    }catch(error){
+      sectionError=message(error);
+      if(section?.recognition_diagnostics){
+        try{checks.push(...JSON.parse(section.recognition_diagnostics()).map(check=>({kind:'Section',...check})));}catch{/* Keep the primary diagnostic if additional reporting fails. */}
+      }
+    }
     // Multiple verified in-plane orientations are one plate category. Prefer
     // the longest in-plane span as X; equal spans keep the first stable frame.
     const frames=[orientation,...WORLD_FRAMES].filter((f,i,all)=>all.findIndex(other=>frameKey(other)===frameKey(f))===i);
@@ -37,7 +42,7 @@ export function detectStep(text,{orientation={length_axis:'x',up_axis:'z'},detec
         if(!plate||analysis.length_mm>plateAnalysis.length_mm+0.002){
           plate?.free();plate=candidate;plateAnalysis=analysis;candidate=null;
         }
-      }catch(error){plateErrors.push(message(error));}
+      }catch(error){plateErrors.push(message(error));checks.push({kind:'Plate',orientation:frame,error:message(error)});}
       finally{candidate?.free();}
     }
     let kind;
@@ -45,7 +50,11 @@ export function detectStep(text,{orientation={length_axis:'x',up_axis:'z'},detec
     catch(error){
       if(error.code==='unsupported'){
         const reasons=[...new Set(plateErrors)].slice(0,3).join(' / ');
-        throw detectionError('unsupported',`${error.message} Section check: ${sectionError.slice(0,1600)} Plate checks: ${reasons.slice(0,1600)}`,section);
+        const failure=detectionError('unsupported',checks.some(check=>check.kind==='Section')
+          ?`${error.message} Review the axis checks below, then correct the working axes or the unsupported geometry.`
+          :`${error.message} Section check: ${sectionError.slice(0,1600)} Plate checks: ${reasons.slice(0,1600)}`,section);
+        if(checks.length)failure.recognitionChecks=checks;
+        throw failure;
       }
       throw detectionError(error.code,error.message,section);
     }
