@@ -61,13 +61,13 @@ export class StepViewer {
     this.baseHeight = 1;
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    this.renderer.setClearColor(0xeff2ed, 0);
+    this.renderer.setClearColor(0x11161c, 0);
     this.scene = new THREE.Scene();
     this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.01, 10000);
-    this.scene.add(new THREE.HemisphereLight(0xffffff, 0x607767, 2.1));
+    this.scene.add(new THREE.HemisphereLight(0xffffff, 0x536171, 2.1));
     const key = new THREE.DirectionalLight(0xffffff, 2.4);
     key.position.set(1, -2, 3); this.scene.add(key);
-    const fill = new THREE.DirectionalLight(0xd7e7df, 1.2);
+    const fill = new THREE.DirectionalLight(0xd6dfe9, 1.2);
     fill.position.set(-2, 1, -1); this.scene.add(fill);
     this.model = new THREE.Group(); this.scene.add(this.model);
     canvas.addEventListener('webglcontextlost', event => {
@@ -105,17 +105,17 @@ export class StepViewer {
     geometry.setIndex(mesh.triangles.flat());
     geometry.computeVertexNormals();
     this.model.add(new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({
-      color: 0xa0b9ad, roughness: 1, metalness: 0, flatShading: true, side: THREE.DoubleSide,
+      color: 0xb9c3cf, roughness: 0.55, metalness: 0.22, flatShading: true, side: THREE.DoubleSide,
       polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1,
     })));
     this.model.add(new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 28),
-      new THREE.LineBasicMaterial({ color: 0x5c7d70, transparent: true, opacity: 0.45 })));
+      new THREE.LineBasicMaterial({ color: 0x8190a2, transparent: true, opacity: 0.45 })));
     if(analysis?.tube_end_profiles){
       for(const contour of analysis.ak_contours){
         const f=contour.face;
         const points=tubeProfilePoints(analysis,contour).map(p=>new THREE.Vector3(...p));
         const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),
-          new THREE.LineBasicMaterial({color:0xd67743,depthTest:false}));
+          new THREE.LineBasicMaterial({color:0xff8a2b,depthTest:false}));
         line.userData.profileFace=f;line.renderOrder=10;this.model.add(line);
       }
     }
@@ -141,7 +141,7 @@ export class StepViewer {
       }
       if(points.some(p=>!p||p.some(x=>!Number.isFinite(x)))||!this.analysis.working_faces.some(f=>f.face===mark.face&&f.machining))continue;
       const world=points.map(p=>new THREE.Vector3(...facePoint(this.analysis,mark.face,p[0],p[1])));
-      const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(world),new THREE.LineBasicMaterial({color:mark.kind==='text'?0x326bc4:0xcc881c,depthTest:false}));
+      const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(world),new THREE.LineBasicMaterial({color:mark.kind==='text'?0xe1e6ec:0xffbd70,depthTest:false}));
       line.userData.markingFace=mark.face;line.renderOrder=12;line.visible=this.view==='iso'||this.view===mark.face;this.model.add(line);
     }this.render();
   }
@@ -206,8 +206,10 @@ export class StepViewer {
   }
 
   buildGuides() {
-    this.overlay.replaceChildren(); this.tags = [];
-    const faces = this.analysis?.working_faces ?? [];
+    this.overlay.replaceChildren(); this.tags = []; this.arrow = null;
+    // An imported display mesh has no verified DSTV origin or working faces.
+    if (!this.analysis) return;
+    const faces = this.analysis.working_faces;
     for (const face of faces.filter(face => this.view === 'iso' ? face.machining : face.face === this.view)) {
       const label = document.createElement('span'); label.className = 'face-tag'; label.textContent = face.face;
       this.overlay.append(label); this.tags.push({ label, point: face.point });

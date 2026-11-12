@@ -1,10 +1,10 @@
 {
   "version": "0.1.0",
-  "build": "78cbad292e4b",
+  "build": "51e1359c8d2b",
   "files": [
     {
       "path": "app.js",
-      "sha256": "2d327284a203b68568b39aeac661be169d34df422166f9bd7ccd103032c97ce7"
+      "sha256": "2f97fc961424211d009c47f5cd7f3cac9def2f0ed3c9b3ccd29ada23959661af"
     },
     {
       "path": "dxf_batch.js",
@@ -15,12 +15,16 @@
       "sha256": "cc4d148f0cb3e6710ac893df9072376d116a8e354ebc0c2501644a1601eb9126"
     },
     {
+      "path": "export_details.js",
+      "sha256": "7667feb1d8701b5008e71182c2fc6f6b064c58ac79b60250a92a72565bec51ae"
+    },
+    {
       "path": "identical_parts.js",
       "sha256": "d9b8161ae19b877994d42bb5e279eb66a769118b34c08166aec0c3cb1129d02b"
     },
     {
       "path": "index.html",
-      "sha256": "8bca789d55b9ac22c7a68af76df910377252a1d5e372e57773da886b9161330e"
+      "sha256": "85f80ae0d0d4ed13f0554c1119aa845470ba847c96d37808ed21ecb46b115c7e"
     },
     {
       "path": "LICENSE-APACHE",
@@ -40,31 +44,31 @@
     },
     {
       "path": "pkg/step_dstv_core.d.ts",
-      "sha256": "720ffe7e3e31bbb4576f36bb2b721b75fa5ca8b61ea888c2f92c8fef0c803e6d"
+      "sha256": "37b1bc6f844f3e856ae20591906d26afd6fcaaffe39520d5d06fcb879dd83a14"
     },
     {
       "path": "pkg/step_dstv_core.js",
-      "sha256": "bfc160ebc925024c2f33475bcf780bd7b3ad00cd1feb0e76d187b9175edd33c5"
+      "sha256": "8c9e75d2dc4cfd344407c53188cd10ffbc70e5468ce78ed863cbb4361810f3bd"
     },
     {
       "path": "pkg/step_dstv_core_bg.wasm",
-      "sha256": "94216899b0e26875abf26ab80e08371b09abd943410ce334d4cfd06355801ab9"
+      "sha256": "fcd606b47fdcdec5fdd58cbd50f6c18365d0515bbd3a2d3114d4d827d8dc7d53"
     },
     {
       "path": "pkg/step_dstv_core_bg.wasm.d.ts",
-      "sha256": "fab0d018bd6a3f1b00d4afd8e44e0299b1e69e2141fcfc49052543054f22abbc"
+      "sha256": "e370ca62c468490cfbb0a37f3c7974106b0bbe143d5dc9eb1c59cf8dabda5825"
     },
     {
       "path": "SOURCE-NOTICE.md",
-      "sha256": "824321848c84585800ad1ab1627429d7cd66dc08526b4dd773fd008f027e7e41"
+      "sha256": "21ac58215e6049eba16ae452f67d076d6cd7b8aa325b622d6cf054a0ff5c314c"
     },
     {
       "path": "step_detection.js",
-      "sha256": "ac05080681d765f2d2384ca2afae929d052abaf7022b1c858943ccce9471e94b"
+      "sha256": "d97ed943b98dca7d1da8ec8410ee121d847521c91723c5bcf0033cc6865a1de6"
     },
     {
       "path": "style.css",
-      "sha256": "777208e56e7d7582db8f0f8f5a20d5292338fb29e8cac6a730563fa92bf8e438"
+      "sha256": "401aa12e44fea61f3a2b8f46e3a3f07d3a4f3f625b2894a0b7a037d222dac1fe"
     },
     {
       "path": "THIRD-PARTY-LICENSES.txt",
@@ -92,11 +96,11 @@
     },
     {
       "path": "viewer.js",
-      "sha256": "412b83612909dd5890f7630791d68b827a641ec3345af973f3658ca127a7f5df"
+      "sha256": "aee11756a9bfc3e93b0fc88837548a1a565d850c3bd7f6cc850429fdd8c5416e"
     },
     {
       "path": "worker.js",
-      "sha256": "726b48ff9aff6bf62d009519094a652767d8d579f5b986094a0e77102269f1e4"
+      "sha256": "fad7fb919a1ccbbd3e35afaea97fb896abf5ac903a2658a7884dca771d4a258d"
     }
   ]
 }

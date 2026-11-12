@@ -56,6 +56,8 @@ export function browser_profile_sample(family: string, with_holes: boolean): str
 
 export function browser_sample(with_holes: boolean): string;
 
+export function browser_step_preview(text: string): string;
+
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
@@ -68,6 +70,7 @@ export interface InitOutput {
     readonly browser_plate_sample: (a: number, b: number, c: number) => [number, number, number, number];
     readonly browser_profile_sample: (a: number, b: number, c: number) => [number, number, number, number];
     readonly browser_sample: (a: number) => [number, number, number, number];
+    readonly browser_step_preview: (a: number, b: number) => [number, number, number, number];
     readonly browserconversion_analyze: (a: number) => [number, number, number, number];
     readonly browserconversion_detected: (a: number, b: number) => [number, number, number];
     readonly browserconversion_detected_with_verification: (a: number, b: number, c: number, d: number) => [number, number, number];

@@ -1,22 +1,35 @@
-import { StepViewer } from './viewer.js?build=78cbad292e4b';
-import { DxfPartReview } from './dxf_batch.js?build=78cbad292e4b';
-import { nc1Zip } from './nc1_zip.js?build=78cbad292e4b';
-import { DxfDrawingPreview } from './dxf_preview.js?build=78cbad292e4b';
-const BUILD='78cbad292e4b';
+import { StepViewer } from './viewer.js?build=51e1359c8d2b';
+import { DxfPartReview } from './dxf_batch.js?build=51e1359c8d2b';
+import { nc1Zip } from './nc1_zip.js?build=51e1359c8d2b';
+import { DxfDrawingPreview } from './dxf_preview.js?build=51e1359c8d2b';
+import { NC1_OUTPUT_MODE, partMarkFromFilename } from './export_details.js?build=51e1359c8d2b';
+const BUILD='51e1359c8d2b';
 const $=id=>document.getElementById(id);
-let viewer=null,drawingPreview=null;
+let viewer=null,drawingPreview=null,stepPreviewActive=false;
 const selectedCutLayers=new Set();
 const partReview=new DxfPartReview();
 const partMapView=new DxfDrawingPreview($('dxf-part-map'));
 const drawingView=new DxfDrawingPreview($('dxf-preview'));
 let worker,busy=false,ready=false,serial=0,currentText=null,mesh=null,analysis=null,view='iso';
 const orientations=()=>({length_axis:$('length-axis').value,up_axis:$('up-axis').value});
-const outputFields=['part-mark','quantity','grade','mode','profile','orientation-confirmed'];
-const markingFields=['si-enabled','si-face','si-text','si-x','si-q','si-angle','si-height','si-width','si-font-confirmed','pu-enabled','pu-face','pu-stroke','pu-points','shaped-holes'];
+const outputFields=['part-mark','quantity','grade','grade-custom','profile','orientation-confirmed'];
+const markingFields=['si-enabled','si-use-part-mark','si-face','si-text','si-x','si-q','si-angle','si-height','si-width','si-font-confirmed','pu-enabled','pu-face','pu-stroke','pu-points','shaped-holes'];
+function resetSiTextLink(){$('si-use-part-mark').checked=true;$('si-text').value='';$('si-font-confirmed').checked=false;}
+function syncSiText(){
+  let changed=false;
+  if($('si-use-part-mark').checked){
+    let mark='';try{mark=partReview.options({part_mark:$('part-mark').value}).part_mark;}catch{}
+    if($('si-text').value!==mark){$('si-text').value=mark;$('si-font-confirmed').checked=false;changed=true;}
+  }
+  const text=$('si-text').value;
+  $('si-text').setCustomValidity($('si-enabled').checked&&(!text.trim()||!/^[\x20-\x7e]{1,40}$/.test(text))?'SI text needs 1–40 printable characters. Shorten the part mark or enter different SI text.':'');
+  if(changed)updateMarkingPreview();
+}
 function markingRequest(requireFont=false){
   const number=id=>{const v=Number($(id).value);if(!$(id).value.trim()||!Number.isFinite(v))throw new Error('Enter finite marking coordinates and dimensions.');return v;};
   const markings=[];
   if($('si-enabled').checked){
+    if(!$('si-text').checkValidity())throw new Error($('si-text').validationMessage);
     if(requireFont&&!$('si-font-confirmed').checked)throw new Error('Confirm that the machine font fits the reserved SI text box.');
     markings.push({kind:'text',face:$('si-face').value,text:$('si-text').value,x_mm:number('si-x'),q_mm:number('si-q'),angle_deg:number('si-angle'),height_mm:number('si-height'),reserved_width_mm:number('si-width')});
   }
@@ -38,6 +51,9 @@ const inputKind=()=>$('input-kind').value;
 const dxfOptions=()=>({units:$('dxf-units').value,cutting_layers:[...selectedCutLayers],thickness_mm:Number($('plate-thickness').value)});
 function eligible(){return ready&&!busy&&viewer?.available&&analysis&&$('mitre-tolerance').checkValidity()&&(!analysis.mitres||analysis.mitres.comparison_mm===Number($('mitre-tolerance').value))&&$('orientation-confirmed').checked&&$('export-form').checkValidity();}
 function controls(){
+  syncSiText();
+  const customGrade=$('grade').value==='__custom__';
+  $('grade-custom-field').hidden=!customGrade;$('grade-custom').required=customGrade;$('grade-custom').disabled=!customGrade||busy;
   const multiple=partReview.parts.length>1;
   const assembly=partReview.assembly;
   $('part-kind-label').textContent=assembly?'STEP assembly member':'Detected DXF part';
@@ -71,10 +87,10 @@ function controls(){
   $('viewer-reset').textContent=rawDrawing?'Reset drawing':'Reset 3D';
   for(const id of ['input-kind','dxf-units','plate-thickness'])$(id).disabled=!ready||busy;
   for(const box of $('cut-layer-options').querySelectorAll('input'))box.disabled=!ready||busy;
-  for(const id of ['step-file','sample-plain','sample-holes','sample-family'])$(id).disabled=!ready||busy;
+  for(const id of ['step-file','replace-file','sample-plain','sample-holes','sample-family'])$(id).disabled=!ready||busy;
   for(const id of ['length-axis','up-axis'])$(id).disabled=!currentText||busy||inputKind()==='plate-dxf'||Boolean(analysis?.source_frame)||assembly;
   for(const id of ['tube-reverse-up','tube-reverse-length'])$(id).disabled=busy||!analysis?.tube_end_profiles||assembly;
-  for(const id of ['part-mark','quantity','grade','mode'])$(id).disabled=busy;
+  for(const id of ['part-mark','quantity','grade'])$(id).disabled=busy;
   $('mitre-tolerance').disabled=!ready||busy||inputKind()==='plate-dxf'||analysis?.family==='PLATE'||Boolean(analysis?.end_copes?.length)||Boolean(analysis?.tube_end_profiles)||Boolean(analysis?.section_cuts)||assembly;
   $('recheck-tolerance').disabled=!ready||busy||!currentText||!$('mitre-tolerance').checkValidity()||assembly;
   $('check-dxf').disabled=!ready||busy||!currentText||inputKind()!=='plate-dxf';
@@ -86,7 +102,7 @@ function controls(){
   for(const id of ['viewer-fit','viewer-reset','viewer-zoom-in','viewer-zoom-out'])$(id).disabled=!drawingPreview?.bounds&&(!mesh||!viewer?.available);
 }
 function invalidate(){ $('result').hidden=true;$('nc1').textContent='';controls(); }
-function setBusy(on,message='Reading and checking geometry…') {busy=on;$('busy').hidden=!on;$('busy-message').textContent=message;controls();}
+function setBusy(on,message='Reading and checking geometry…',blocking=true) {busy=on;$('busy').hidden=!on||!blocking;$('busy-message').textContent=message;controls();}
 function recognitionDetails(checks=[]){
   const panel=$('recognition-details'),list=$('recognition-checks');
   list.replaceChildren();panel.hidden=!checks.length;panel.open=false;
@@ -98,7 +114,7 @@ function recognitionDetails(checks=[]){
   }
 }
 function status(message,kind=''){$('status').textContent=message;$('status').className='status '+kind;}
-function reset({keepDrawing=false,keepParts=false}={}){recognitionDetails();if(!keepParts){partReview.clear();partMapView.clear();$('dxf-part-select').replaceChildren();}const retained=keepDrawing?drawingPreview:null;drawingPreview=null;drawingView.clear();$('drop-zone').classList.remove('drawing-mode');$('dxf-preview').toggleAttribute('hidden',true);$('preview').hidden=false;$('dxf-preview-note').hidden=true;$('dxf-layers').hidden=true;$('empty').hidden=false;$('input-detection').hidden=true;$('input-detection').textContent='';for(const id of ['si-enabled','pu-enabled','si-font-confirmed'])$(id).checked=false;$('si-fields').hidden=true;$('pu-fields').hidden=true;$('marking-error').textContent='';analysis=null;mesh=null;view='iso';viewer?.clear();for(const b of document.querySelectorAll('[data-view]')){b.hidden=false;b.classList.toggle('active',b.dataset.view==='iso');}$('profile').value='';$('face-guide').textContent=defaultFaceGuide;$('orientation-confirmed').checked=false;$('hole-details').hidden=true;$('slot-details').hidden=true;$('cope-details').hidden=true;$('tube-orientation').hidden=true;$('coordinate-details').hidden=true;$('measurements').replaceChildren();$('verification').textContent='No geometry has been verified.';if(retained)showDrawing(retained);invalidate();}
+function reset({keepDrawing=false,keepParts=false}={}){stepPreviewActive=false;$('step-preview-note').hidden=true;recognitionDetails();if(!keepParts){partReview.clear();partMapView.clear();$('dxf-part-select').replaceChildren();}const retained=keepDrawing?drawingPreview:null;drawingPreview=null;drawingView.clear();$('drop-zone').classList.remove('drawing-mode');$('dxf-preview').toggleAttribute('hidden',true);$('preview').hidden=false;$('dxf-preview-note').hidden=true;$('dxf-layers').hidden=true;$('empty').hidden=false;$('input-detection').hidden=true;$('input-detection').textContent='';for(const id of ['si-enabled','pu-enabled','si-font-confirmed'])$(id).checked=false;$('si-fields').hidden=true;$('pu-fields').hidden=true;$('marking-error').textContent='';analysis=null;mesh=null;view='iso';viewer?.clear();for(const b of document.querySelectorAll('[data-view]')){b.hidden=false;b.classList.toggle('active',b.dataset.view==='iso');}$('profile').value='';$('face-guide').textContent=defaultFaceGuide;$('orientation-confirmed').checked=false;$('hole-details').hidden=true;$('slot-details').hidden=true;$('cope-details').hidden=true;$('tube-orientation').hidden=true;$('coordinate-details').hidden=true;$('measurements').replaceChildren();$('verification').textContent='No geometry has been verified.';if(retained)showDrawing(retained);invalidate();}
 function showDrawing(drawing){
   drawingPreview=drawing;$('drop-zone').classList.add('drawing-mode');
   $('preview').hidden=true;$('viewer-error').hidden=true;$('empty').hidden=true;
@@ -147,10 +163,11 @@ function showDxfParts(data){
 }
 function selectDxfPart(index){
   if(busy||index===partReview.activePart)return;
+  resetSiTextLink();
   partReview.select(index);resetTubeSelection();reset({keepDrawing:true,keepParts:true});
   setBusy(true,'Opening the selected part…');worker.postMessage({id:++serial,type:'select-part',index});
 }
-function exportRequest(requireFont=false){return {part_mark:$('part-mark').value,grade:$('grade').value,quantity:Number($('quantity').value),profile:$('profile').value,mode:$('mode').value,orientation_confirmed:$('orientation-confirmed').checked,...markingRequest(requireFont)};}
+function exportRequest(requireFont=false){return {part_mark:$('part-mark').value,grade:$('grade').value==='__custom__'?$('grade-custom').value.trim():$('grade').value,quantity:Number($('quantity').value),profile:$('profile').value,mode:NC1_OUTPUT_MODE,orientation_confirmed:$('orientation-confirmed').checked,...markingRequest(requireFont)};}
 function downloadBlob(blob,filename){const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=filename;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}
 function resetTubeSelection(){for(const id of ['tube-reverse-up','tube-reverse-length'])$(id).checked=false;}
 function startWorker(){
@@ -158,14 +175,31 @@ function startWorker(){
   worker.onmessage=({data})=>{
     if(data.type==='ready'){if(data.build!==BUILD){status('Converter build mismatch · reload this page before converting.','error');return;}ready=true;$('engine-status').textContent='WASM ENGINE READY · '+BUILD;controls();return;}
     if(data.id!==serial)return;
+    if(data.type==='step-preview'){
+      if(data.text!==undefined)currentText=data.text;
+      analysis=null;stepPreviewActive=Boolean(data.mesh);
+      $('orientation-confirmed').checked=false;$('profile').value='';
+      $('step-preview-note').hidden=false;
+      $('step-preview-note').textContent=data.mesh?'Preview only · geometry checks are still running. Details and NC1 export stay locked.'+(data.warnings?.length?' Import warnings: '+data.warnings.join('; '):''):data.message;
+      $('step-preview-note').dataset.pending='true';
+      $('input-detection').hidden=false;$('input-detection').textContent='STEP preview · not verified';
+      $('verification').textContent='This is a display mesh. Supported geometry, working faces and NC1 eligibility have not been verified.';
+      if(data.mesh){mesh=data.mesh;$('empty').hidden=true;for(const b of document.querySelectorAll('[data-view]'))b.hidden=b.dataset.view!=='iso';}
+      setBusy(true,data.message,!data.mesh);
+      if(data.mesh)viewer?.setModel(mesh,null);
+      status(data.message);controls();return;
+    }
+    if(data.type==='step-progress'){status(data.message);return;}
     if(data.type==='dxf-preview'){if(data.text!==undefined)currentText=data.text;showDrawing(data.drawing);setBusy(Boolean(data.pending));status(data.message,data.drawing?.bounds?'':'error');controls();return;}
     setBusy(false);
     if(data.type==='input-required'){if(data.text!==undefined)currentText=data.text;status(data.message);controls();return;}
-    if(data.type==='error'){recognitionDetails(data.recognitionChecks);if(data.clearParts)partReview.clear();if(data.text!==undefined)currentText=data.text;if(data.mesh){mesh=data.mesh;$('empty').hidden=true;viewer?.setModel(mesh,null);}status(data.message,'error');controls();return;}
+    if(data.type==='error'){$('step-preview-note').dataset.pending='false';if(stepPreviewActive){$('step-preview-note').dataset.pending='false';$('step-preview-note').textContent='Preview only · geometry checks failed. NC1 export is unavailable.';}recognitionDetails(data.recognitionChecks);if(data.clearParts)partReview.clear();if(data.text!==undefined)currentText=data.text;if(data.mesh){mesh=data.mesh;$('empty').hidden=true;viewer?.setModel(mesh,null);}status(data.message,'error');controls();return;}
     if(data.type==='part-blocked'){
-      showDxfParts(data);analysis=null;mesh=null;viewer?.clear();$('empty').hidden=false;$('empty').querySelector('h2').textContent='Member cannot be converted';$('empty').querySelector('p').textContent='This occurrence is listed but blocked. Select another member to review its geometry.';status(data.message,'error');controls();return;
+      $('step-preview-note').dataset.pending='false';
+      showDxfParts(data);analysis=null;if(!stepPreviewActive){mesh=null;viewer?.clear();$('empty').hidden=false;}else{$('step-preview-note').dataset.pending='false';$('step-preview-note').textContent='Assembly preview only · this member cannot be converted. Select another listed member to review.';}$('empty').querySelector('h2').textContent='Member cannot be converted';$('empty').querySelector('p').textContent='This occurrence is listed but blocked. Select another member to review its geometry.';status(data.message,'error');controls();return;
     }
     if(data.type==='loaded'){
+      stepPreviewActive=false;$('step-preview-note').hidden=true;
       $('drop-zone').classList.remove('drawing-mode');$('dxf-preview').toggleAttribute('hidden',true);$('preview').hidden=false;$('dxf-preview-note').hidden=true;
       $('measurements').replaceChildren();
       analysis=data.analysis;mesh=data.mesh;if(data.text!==undefined)currentText=data.text;$('input-detection').hidden=false;$('input-detection').textContent=inputKind()==='plate-dxf'?'DXF plate outlines':data.detectedKind==='plate'?'STEP detected as flat plate':'STEP detected as steel section';
@@ -175,14 +209,16 @@ function startWorker(){
       const mm=x=>Number(x).toLocaleString(undefined,{maximumFractionDigits:3})+' mm';
       const tube=['RHS','SHS'].includes(analysis.family),channel=analysis.family==='PFC',isection=analysis.family==='I';
       const fields=[['Section',analysis.family+' · '+mm(analysis.height_mm)+' × '+mm(analysis.width_mm)],['Length',mm(analysis.length_mm)],[channel||isection?'Flange / web':tube?'Wall':'Leg thickness',channel||isection?mm(analysis.wall_mm)+' / '+mm(analysis.web_mm):mm(analysis.wall_mm)],[tube?'Outside radius':isection?'Root radius':'Root / toe radius',tube?mm(analysis.outer_radius_mm):isection?mm(analysis.inner_radius_mm):mm(analysis.inner_radius_mm)+' / '+mm(analysis.toe_radius_mm)],['Round holes',String(analysis.holes.length)],['Edge slots',String(analysis.edge_slots.length)]];
+      if(analysis.section_sampling)fields.push(['Stock sections',`${analysis.section_sampling.matching} / ${analysis.section_sampling.divisions} agree`]);
       if(analysis.family==='PLATE')fields.splice(0,fields.length,['Plate face',mm(analysis.length_mm)+' × '+mm(analysis.height_mm)],['Thickness',mm(analysis.wall_mm)],['Round through-holes',String(analysis.holes.length)],['Internal through-contours',String(analysis.internal_contours)]);
       if(analysis.section_cuts){fields.push(['Internal through-cuts',String(analysis.section_cuts.faces.reduce((n,f)=>n+f.region.holes.length,0))],['Notched faces',analysis.section_cuts.faces.filter(f=>f.external_changed).map(f=>f.face.toUpperCase()).join(' / ')||'None']);}
       if(analysis.end_copes?.length)fields.push(['End copes',String(analysis.end_copes.length)]);
-      if(analysis.tube_end_profiles){fields.push(['Cutting outlines','4 · H / U / V / O'],['Profile allowance','0.25 mm · ProCAM']);$('mode').value='procam';}
+      if(analysis.tube_end_profiles){fields.push(['Cutting outlines','4 · H / U / V / O'],['Profile allowance','0.25 mm · ProCAM']);}
       if(analysis.mitres){
         fields[1][0]='Overall finished length';
         const angles=analysis.mitres.angles_deg.map(x=>(Math.abs(x)<0.0005?0:x).toFixed(3)+'°');
         fields.push(['Start · web / flange',angles[0]+' / '+angles[2]],['End · web / flange',angles[1]+' / '+angles[3]],['Minimum length along X',mm(analysis.mitres.minimum_generator_length_mm)],['Comparison tolerance',String(analysis.mitres.comparison_mm)+' mm']);
+        if(analysis.mitres.root_trim)fields.push(['STEP root-trim allowance','≤ '+analysis.mitres.root_trim.allowance_mm+' mm']);
         if(analysis.mitres.compound_ends?.some(Boolean))fields.push(['Compound ends',analysis.mitres.compound_ends.map((yes,i)=>yes?(i?'End':'Start'):null).filter(Boolean).join(' / ')],['3D tilt · start / end',analysis.mitres.inclinations_deg.map(v=>v.toFixed(3)+'°').join(' / ')]);
       }
       for(const [label,value]of fields){const row=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;row.append(dt,dd);$('measurements').append(row);}
@@ -212,10 +248,11 @@ function startWorker(){
       status(`NC1 generated from the current solid${analysis.mitres?' at '+analysis.mitres.comparison_mm+' mm comparison tolerance':''}. ProCAM/machine validation remains separate.`,'success');
     }
   };
-  worker.onerror=event=>{ready=false;analysis=null;setBusy(false);status('The geometry worker stopped. Reload this page before trying another file. '+event.message,'error');$('engine-status').textContent='ENGINE STOPPED';};
+  worker.onerror=event=>{ready=false;analysis=null;$('step-preview-note').dataset.pending='false';setBusy(false);status('The geometry worker stopped. Reload this page before trying another file. '+event.message,'error');$('engine-status').textContent='ENGINE STOPPED';};
 }
 function load(text,{sample,name,detectOrientation=false,checkDxf=false}={}){
   if(!ready||busy)return;
+  if(sample!==undefined)resetSiTextLink();
   if(!$('mitre-tolerance').reportValidity())return;
   toleranceHadAnalysis=false;
   reset();$('empty').querySelector('h2').textContent='Bring in a member or plate';$('empty').querySelector('p').textContent='Drop a STEP for automatic detection, or a DXF outline. DXF needs units, cutting layers and thickness before checking.';if(text!==undefined)currentText=text;else if(sample!==undefined)currentText=null;
@@ -228,12 +265,15 @@ async function fileInput(file){
   if(!file||busy)return;
   selectedCutLayers.clear();showCutLayerChoices(null);
   if(!/\.(step|stp|dxf)$/i.test(file.name)||file.size>10*1024*1024){reset();currentText=null;status('Choose a .step, .stp or .dxf file up to 10 MiB (DXF core limit 2 MiB).','error');controls();return;}
+  resetSiTextLink();$('part-mark').value=partMarkFromFilename(file.name);
+  $('part-mark-hint').textContent='Taken from the file name. Edit it if needed.';
   if(/\.dxf$/i.test(file.name)){$('input-kind').value='plate-dxf';$('dxf-fields').hidden=false;}
   else {$('input-kind').value='step';$('dxf-fields').hidden=true;}
   try {resetTubeSelection();$('length-axis').value='x';$('up-axis').value='z';load(await file.text(),{name:file.name,detectOrientation:true});}catch(error){reset();currentText=null;status(String(error),'error');controls();}
 }
 $('step-file').addEventListener('change',event=>fileInput(event.target.files[0]));
-for(const [id,holes]of [['sample-plain',false],['sample-holes',true]])$(id).addEventListener('click',()=>{selectedCutLayers.clear();showCutLayerChoices(null);resetTubeSelection();$('length-axis').value='x';$('up-axis').value='z';const plate=$('sample-family').value.startsWith('PLATE_');if(plate){if(inputKind()!=='plate-dxf')$('input-kind').value='step';$('length-axis').value='x';$('up-axis').value='z';}else $('input-kind').value='step';$('dxf-fields').hidden=inputKind()!=='plate-dxf';load(undefined,{sample:holes,detectOrientation:true,name:`Analytic ${sampleLabel()} sample`});});
+$('replace-file').addEventListener('click',()=>$('step-file').click());
+for(const [id,holes]of [['sample-plain',false],['sample-holes',true]])$(id).addEventListener('click',()=>{$('part-mark').value=partMarkFromFilename(sampleLabel()+'_SAMPLE');$('part-mark-hint').textContent='Sample part mark. Edit it if needed.';selectedCutLayers.clear();showCutLayerChoices(null);resetTubeSelection();$('length-axis').value='x';$('up-axis').value='z';const plate=$('sample-family').value.startsWith('PLATE_');if(plate){if(inputKind()!=='plate-dxf')$('input-kind').value='step';$('length-axis').value='x';$('up-axis').value='z';}else $('input-kind').value='step';$('dxf-fields').hidden=inputKind()!=='plate-dxf';load(undefined,{sample:holes,detectOrientation:true,name:`Analytic ${sampleLabel()} sample`});});
 for(const id of ['input-kind','dxf-units','plate-thickness'])$(id).addEventListener('input',inputSettingsChanged);
 $('sample-family').addEventListener('change',()=>{const cut=$('sample-family').value.startsWith('CUT_'),assembly=$('sample-family').value==='ASSEMBLY';for(const [id,label]of [['sample-plain','Plain'],['sample-holes','Drilled']]){$(id).hidden=cut&&id==='sample-holes';$(id).textContent=assembly?(id==='sample-plain'?'Assembly sample ↗':'Assembly with unsupported pin ↗'):cut?`Load ${sampleLabel()} sample ↗`:`${label} ${sampleLabel()} sample ↗`;}});
 for(const id of ['length-axis','up-axis'])$(id).addEventListener('change',()=>load(currentText));
@@ -248,8 +288,8 @@ $('mitre-tolerance').addEventListener('input',()=>{
 });
 $('check-dxf').addEventListener('click',()=>load(currentText,{checkDxf:true}));
 $('recheck-tolerance').addEventListener('click',()=>{load(currentText,{checkDxf:inputKind()==='plate-dxf',detectOrientation:!toleranceHadAnalysis});toleranceHadAnalysis=false;});
-for(const id of outputFields)$(id).addEventListener('input',()=>{if(id==='orientation-confirmed')partReview.confirm($('orientation-confirmed').checked);invalidate();});
-for(const id of markingFields)$(id).addEventListener('input',()=>{if(['si-text','si-height','si-width'].includes(id))$('si-font-confirmed').checked=false;invalidate();updateMarkingPreview();});
+for(const id of outputFields)$(id).addEventListener('input',()=>{if(id==='orientation-confirmed')partReview.confirm($('orientation-confirmed').checked);invalidate();if(id==='part-mark')updateMarkingPreview();});
+for(const id of markingFields)$(id).addEventListener('input',()=>{if(id==='si-text')$('si-use-part-mark').checked=false;if(['si-text','si-use-part-mark','si-height','si-width'].includes(id))$('si-font-confirmed').checked=false;invalidate();updateMarkingPreview();});
 $('dxf-grouping').addEventListener('change',()=>{partReview.combineIdentical=$('dxf-grouping').value==='combined';invalidate();});
 $('dxf-part-select').addEventListener('change',()=>selectDxfPart(Number($('dxf-part-select').value)));
 $('export-form').addEventListener('submit',event=>{event.preventDefault();if(partReview.combineIdentical||!eligible())return;let options;try{options=partReview.options(exportRequest(true));}catch(e){status(e.message,'error');return;}setBusy(true,'Rechecking the current solid and generating NC1…');worker.postMessage({id:++serial,type:'export',options});});

@@ -9,6 +9,7 @@ export const browser_assembly_sample: (a: number) => [number, number, number, nu
 export const browser_plate_sample: (a: number, b: number, c: number) => [number, number, number, number];
 export const browser_profile_sample: (a: number, b: number, c: number) => [number, number, number, number];
 export const browser_sample: (a: number) => [number, number, number, number];
+export const browser_step_preview: (a: number, b: number) => [number, number, number, number];
 export const browserconversion_analyze: (a: number) => [number, number, number, number];
 export const browserconversion_detected: (a: number, b: number) => [number, number, number];
 export const browserconversion_detected_with_verification: (a: number, b: number, c: number, d: number) => [number, number, number];

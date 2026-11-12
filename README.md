@@ -1,5 +1,12 @@
 # STEP / DXF to DSTV converter — experimental browser preview
 
+12 November 2026 reviewed update: staged STEP previews, adaptive stock recognition
+and faster section checks; black/silver/orange controls; filename-derived part
+marks linked to SI text; SI face/X/Q help; steel-grade presets/custom entry; and
+a clear Replace file button. Eligible imported I-root/end trim approximations
+have a separate bounded 0.50 mm allowance while the normal mitre comparison stays
+at 0.02 mm by default. Software verification and machine acceptance remain separate.
+
 ## [Open converter](https://dcb-eng.github.io/step-dstv-converter/)
 
 Use the converter online — no installation or GitHub account required.

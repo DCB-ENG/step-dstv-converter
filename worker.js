@@ -1,11 +1,11 @@
-import init,{BrowserConversion,BrowserPlate,BrowserPlateBatch,BrowserStepAssembly,browser_assembly_sample,browser_plate_sample,browser_profile_sample} from './pkg/step_dstv_core.js?build=78cbad292e4b';
-import {detectStep} from './step_detection.js?build=78cbad292e4b';
-import {parseDxfPreview} from './dxf_preview.js?build=78cbad292e4b';
-import {identicalPartGroups,exportBatchFiles} from './identical_parts.js?build=78cbad292e4b';
+import init,{BrowserConversion,BrowserPlate,BrowserPlateBatch,BrowserStepAssembly,browser_assembly_sample,browser_step_preview,browser_plate_sample,browser_profile_sample} from './pkg/step_dstv_core.js?build=51e1359c8d2b';
+import {detectStep} from './step_detection.js?build=51e1359c8d2b';
+import {parseDxfPreview} from './dxf_preview.js?build=51e1359c8d2b';
+import {identicalPartGroups,exportBatchFiles} from './identical_parts.js?build=51e1359c8d2b';
 let conversion=null,batch=null,parts=[],activePart=0,batchKind=null;
 function clearConversion(){conversion?.free();conversion=null;batch=null;parts=[];activePart=0;batchKind=null;}
-await init({module_or_path:new URL('./pkg/step_dstv_core_bg.wasm?build=78cbad292e4b',import.meta.url)});
-self.postMessage({type:'ready',build:'78cbad292e4b'});
+await init({module_or_path:new URL('./pkg/step_dstv_core_bg.wasm?build=51e1359c8d2b',import.meta.url)});
+self.postMessage({type:'ready',build:'51e1359c8d2b'});
 self.onmessage=({data})=>{
   const {id,type}=data;
   let loadedText;
@@ -39,6 +39,15 @@ self.onmessage=({data})=>{
         analysis=JSON.parse(conversion.analyze());detectedKind='plate';
       }
       else{
+        try{
+          const preview=JSON.parse(browser_step_preview(text));
+          loadedMesh=preview.mesh;
+          self.postMessage({id,type:'step-preview',...preview,text:loadedText,message:'STEP preview ready · checking member details…'});
+        }catch(error){
+          self.postMessage({id,type:'step-preview',mesh:null,text:loadedText,message:`STEP preview unavailable: ${String(error)}. Continuing geometry checks…`});
+        }
+        const progress=message=>self.postMessage({id,type:'step-progress',message});
+        progress('Checking STEP occurrences and supported geometry…');
         batchKind='step';batch=BrowserStepAssembly.step(text,JSON.stringify({mitre_tolerance_mm:data.mitreToleranceMm??0.02}));
         if(batch){
         conversion={free:()=>batch?.free(),analyze:()=>batch.analyze_part(activePart),preview:()=>batch.preview_part(activePart),export_nc1:options=>batch.export_part(activePart,options)};
@@ -48,7 +57,7 @@ self.onmessage=({data})=>{
           analysis=JSON.parse(conversion.analyze());detectedKind=parts[0].kind;
         }else{
         conversion=null;batch=null;batchKind=null;parts=[];
-        const selected=detectStep(text,{orientation:data.orientation,detectOrientation:data.detectOrientation,verification:{mitre_tolerance_mm:data.mitreToleranceMm??0.02}},{BrowserConversion,BrowserPlate});
+        const selected=detectStep(text,{orientation:data.orientation,detectOrientation:data.detectOrientation,verification:{mitre_tolerance_mm:data.mitreToleranceMm??0.02},onProgress:progress},{BrowserConversion,BrowserPlate});
         conversion=selected.conversion;analysis=selected.analysis;detectedKind=selected.kind;
         }
       }

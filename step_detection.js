@@ -17,12 +17,13 @@ export function verifiedKind(section,plate){
   if(!section&&!plate)throw detectionError('unsupported','STEP geometry did not verify as a supported steel section or flat plate.');
   return section?'section':'plate';
 }
-export function detectStep(text,{orientation={length_axis:'x',up_axis:'z'},detectOrientation=true,verification={mitre_tolerance_mm:0.02}}={},api){
+export function detectStep(text,{orientation={length_axis:'x',up_axis:'z'},detectOrientation=true,verification={mitre_tolerance_mm:0.02},onProgress=()=>{}}={},api){
   const verificationJson=JSON.stringify(verification);
   let section=null,sectionAnalysis=null,sectionError='',plate=null,plateAnalysis=null;
   const plateErrors=[],checks=[];
   try{
     try{
+      onProgress('Recognising the section and checking its complete geometry…');
       section=api.BrowserConversion.detected_with_verification(text,verificationJson);
       sectionAnalysis=JSON.parse(section.analyze());
     }catch(error){
@@ -37,6 +38,7 @@ export function detectStep(text,{orientation={length_axis:'x',up_axis:'z'},detec
     for(const frame of frames){
       let candidate=null;
       try{
+        onProgress(`Checking flat-plate alternative · length ${frame.length_axis.toUpperCase()}, up ${frame.up_axis.toUpperCase()}…`);
         candidate=api.BrowserPlate.step(text,JSON.stringify(frame));
         const analysis=JSON.parse(candidate.analyze());
         if(!plate||analysis.length_mm>plateAnalysis.length_mm+0.002){

@@ -1,5 +1,72 @@
 # STEP / DXF to DSTV — experimental browser converter
 
+12 November 2026 publication approval: after reviewing the local program and
+the clearer Replace file button, the user explicitly requested committing this
+update to the website. Reviewed build `51e1359c8d2b` includes the loading and
+stock-recognition improvements below, the bounded I-root trim allowance, the
+black/silver/orange interface, filename-derived part marks, linked SI text,
+coordinate help and steel-grade selection. Software and browser checks passed.
+Historical local-review statements below describe the state before this approval.
+No customer files, upstream/development sources or new machine-acceptance claims
+are included in this website publication.
+
+12 November 2026 local details UI: SI text follows the active part mark by
+default, with explicit custom text and the existing 40-character limit. Text
+changes clear font-fit confirmation. Information buttons explain SI face, X
+and Q. A required steel-grade dropdown includes custom entry; the operator
+supplies the job's material grade. Geometry verification and core output modes
+retain their existing behaviour. This update remains local pending review.
+
+11 November 2026 local I-root trim update: imported root/end trim curves may be
+normalized to their verified cylinder/plane intersections after a complete
+0.50 mm correction certificate. Endpoints, stock, cut planes, holes and ordinary
+boundaries retain the selected comparison (default 0.02 mm). Source spline-net
+checks remain. Analysis reports the separate allowance and affected NC1 files
+record it in a comment. Rounded output is reconstructed and checked again.
+A local kernel projection API permits tighter caller budgets without a coarser
+fallback. Existing exports passing the ordinary comparison keep their bytes.
+This update remains local pending review; earlier CAM acceptance of one trial
+file does not constitute physical machine validation.
+
+11 November 2026 local section-performance review: a guarded local kernel
+reader transports actual end-boundary curves through intact straight swept
+walls. Ambiguous or complex sections retain the half-solid/cap route. Every
+sampling station is read; exact complete 2D-region equality can reuse stock
+classification within that sampling operation. Spline-source checks, complete
+current-solid machining checks, strict/ProCAM separation and rounded NC1
+verification remain. No new geometry family, publication or machine approval
+is added by this local performance change.
+
+11 November 2026 local performance review: multi-slot angle reconstruction
+joins adjacent pieces in balanced rounds to reduce repeated Boolean work.
+All cutters, whole-solid and trim-boundary comparisons, geometry tolerances,
+stock sampling and rounded-output checks remain in place. Native opt-in timing
+and a local WASM-worker profiler explain the remaining costs. This local change
+has no publication or new machine-acceptance approval.
+
+11 November 2026 local UI review: the browser offers one NC1 export using the
+existing complete ProCAM format. The strict and ProCAM core writers remain
+separate and unchanged for explicit API/CLI use. Filenames supply editable,
+NC1-safe part marks, including numbered member/plate suffixes. The black,
+silver and orange theme changes display only. Geometry checks and tolerances
+remain unchanged; this UI increment has no publication or new machine approval.
+
+10 November 2026 local stock-recognition review: bounded transverse sections
+propose RHS/SHS, angle, PFC and I stock with 75% agreement over four/eight/sixteen
+divisions. Plates remain separate. Straight spline-encoded tube corners require
+supported repeated sections; original whole-solid machining checks and rounded
+NC1 verification still control output. Tube tangent cleanup has explicit bounds
+within the existing 0.25 mm exterior-profile contract. I spline-root evidence,
+strict/ProCAM separation and assembly evidence restrictions remain. These local
+changes have no new publication or machine-acceptance approval.
+
+9 November 2026 local loading review: STEP display meshes can appear before
+geometry checks, with details and NC1 locked until verification completes.
+Unverified display has no DSTV origins or working-face guides. Successful
+recognition details are retained for the immutable solid's display; export
+still rechecks current geometry. This loading increment has no publication or
+new machine-acceptance approval. The approval below records the preceding release.
+
 9 November 2026 publication approval: after reviewing the local browser build,
 the user explicitly requested committing it to GitHub. Build `78cbad292e4b`
 includes the assembly and compound I-end scopes below, the half-thickness angle
@@ -201,10 +268,13 @@ Simple and compound planar I mitres at either or both ends extend through 65
 degrees total inclination from square. Restricted rational spline roots and
 bounded small end remnants have whole-net/curve checks. Multi-plane ends,
 combined cope/mitres and weld preparations remain unsupported.
-The total mitre comparison allowance is adjustable from 0.002 to 1.000 mm,
+The normal mitre comparison allowance is adjustable from 0.002 to 1.000 mm,
 default 0.020 mm. Larger values permit larger discrepancies. Source geometry and
 actual rounded NC1 must pass the same selected allowance, including projection
 and curve uncertainty; non-default output records the setting in a comment.
+Eligible imported I-root/end trim approximations have the separate fixed
+0.50 mm normalization allowance described above; both current-solid recognition
+and rounded-output reconstruction enforce this policy.
 
 Pure supported mitres use signed header angles and finished overall X extent,
 without redundant AK or inferred saw allowance. An analytic ruled reconstruction
