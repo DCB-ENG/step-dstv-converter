@@ -1,5 +1,12 @@
 # STEP / DXF to DSTV converter — experimental browser preview
 
+13 November 2026 reviewed update: Report a problem is always available, with an
+additional action beside failures. Review safe local diagnostics, copy or download
+without a GitHub account, or open a public GitHub issue draft to paste and submit
+yourself. Automatic diagnostics exclude job identifiers, raw errors and file
+contents. Optional attachments are added manually by the user on GitHub; nothing
+is uploaded automatically. Worker and application failures remain reportable.
+
 12 November 2026 reviewed update: staged STEP previews, adaptive stock recognition
 and faster section checks; black/silver/orange controls; filename-derived part
 marks linked to SI text; SI face/X/Q help; steel-grade presets/custom entry; and

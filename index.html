@@ -3,16 +3,17 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'">
+  <script src="report_startup.js?build=c28d2b169b98"></script>
   <title>STEP / DXF to DSTV (NC1) Converter | SolidCraftDSTV</title>
   <meta name="description" content="Free experimental browser-based STEP and DXF to DSTV (NC1) converter. Preview supported RHS, SHS, PFC, angle, I-section and plate geometry. Files stay in your browser.">
   <link rel="canonical" href="https://dcb-eng.github.io/step-dstv-converter/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="STEP / DXF to DSTV (NC1) Converter | SolidCraftDSTV">
   <meta property="og:description" content="Convert supported steel section and plate geometry into DSTV NC1 files locally in your browser. Experimental preview.">
-  <meta property="og:url" content="https://dcb-eng.github.io/step-dstv-converter/"><link rel="stylesheet" href="style.css?build=51e1359c8d2b">
+  <meta property="og:url" content="https://dcb-eng.github.io/step-dstv-converter/"><link rel="stylesheet" href="style.css?build=c28d2b169b98">
 </head>
 <body>
-  <header><a class="brand" href="./">SC<span>/</span>DSTV</a><span class="badge">BROWSER PREVIEW · 0.1</span><span class="privacy">Files stay in your browser</span></header>
+  <header><a class="brand" href="./">SC<span>/</span>DSTV</a><span class="badge">BROWSER PREVIEW · 0.1</span><span class="privacy">Files stay in your browser</span><button id="report-problem" class="button quiet" type="button">Report a problem</button></header>
   <main>
     <div class="intro"><p class="eyebrow">STEELWORK / FILE CONVERSION · LOCAL REVIEW</p><h1>STEP / DXF geometry.<br><span>DSTV output.</span></h1><p>Steel sections and flat plates. Plate outlines, analytic arcs, round holes and internal through-cuts are checked against a thickness-aware solid before NC1 output.</p></div>
     <section class="workspace" aria-label="STEP converter">
@@ -86,8 +87,26 @@
     <details id="hole-details" hidden><summary>Detected wall-hole coordinates</summary><div id="holes"></div></details>
     <details id="slot-details" hidden><summary>Detected edge slots · AK contour coordinates</summary><div id="slots"></div></details>
     <details id="cope-details" hidden><summary>Detected end copes · V/O/U AK coordinates</summary><div id="copes"></div></details>
-    <footer><span>SolidCraftDSTV · experimental browser preview · build 51e1359c8d2b</span><a href="SOURCE-NOTICE.md">Source & format notes ↗</a></footer>
-  </main><script type="module" src="app.js?build=51e1359c8d2b"></script>
+    <footer><span>SolidCraftDSTV · experimental browser preview · build c28d2b169b98</span><a href="SOURCE-NOTICE.md">Source & format notes ↗</a></footer>
+  </main>
+  <dialog id="report-panel" data-build="c28d2b169b98" aria-labelledby="report-title" aria-describedby="report-privacy">
+    <div class="report-heading"><h2 id="report-title">Report a problem</h2><button id="report-close" class="button quiet" type="button" autofocus>Close</button></div>
+    <p id="report-privacy">Prepare a report locally. Nothing is uploaded automatically. Copy and download work without a GitHub account.</p>
+    <p class="report-public">GitHub issues and attachments in DCB-ENG/step-dstv-converter are <strong>public</strong>. Review every word before sharing. Remove customer details from your description and any attachments.</p>
+    <label>Problem observed<select id="report-observed"><option value="unknown">Not sure / other</option><option value="incorrect-preview">Incorrect preview</option><option value="incorrect-nc1">Incorrect NC1 output</option><option value="conversion-failure">Import or export refused</option><option value="application-problem">Application or worker problem</option></select></label>
+    <label>What happened?<textarea id="report-description" rows="3" maxlength="4000" placeholder="Describe the problem without customer or job identifiers."></textarea></label>
+    <label>What did you expect?<textarea id="report-expected" rows="3" maxlength="4000"></textarea></label>
+    <p class="hint">Automatic diagnostics omit raw errors, stack traces, file paths/names, part marks, SI text, layer/member names and file contents. Descriptions above are shared as written. No keystrokes or file content are logged. Recent operation history stays in memory and clears on reload.</p>
+    <p class="hint">Optional STEP/DXF, NC1 and screenshots: attach them yourself in GitHub after reviewing their contents and checking permission to share them publicly. This panel does not collect or upload attachments.</p>
+    <div class="report-heading"><label for="report-preview">Exactly what Copy / Download will share</label><button id="report-refresh" class="button quiet" type="button">Refresh diagnostics</button></div>
+    <p class="hint">Diagnostics are a snapshot taken when this panel opens. Refresh to capture later operations. GitHub receives only a general draft until you paste this report.</p>
+    <textarea id="report-preview" rows="12" readonly spellcheck="false" aria-label="Report preview"></textarea>
+    <div class="report-actions"><button id="report-copy" class="button primary" type="button">Copy report</button><button id="report-download" class="button" type="button">Download diagnostic report</button><button id="report-github" class="button" type="button">Open GitHub report</button></div>
+    <p class="hint">Open GitHub report copies this preview and opens a prefilled issue draft in a new tab. Paste the report, review it and submit it yourself. Report content is never put into the draft URL. GitHub may require sign-in.</p>
+    <p id="report-feedback" role="status" aria-live="polite"></p>
+  </dialog>
+  <script type="module" src="problem_report.js?build=c28d2b169b98"></script>
+  <script type="module" src="app.js?build=c28d2b169b98"></script>
 </body></html>
 
 

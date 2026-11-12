@@ -1,11 +1,11 @@
-import init,{BrowserConversion,BrowserPlate,BrowserPlateBatch,BrowserStepAssembly,browser_assembly_sample,browser_step_preview,browser_plate_sample,browser_profile_sample} from './pkg/step_dstv_core.js?build=51e1359c8d2b';
-import {detectStep} from './step_detection.js?build=51e1359c8d2b';
-import {parseDxfPreview} from './dxf_preview.js?build=51e1359c8d2b';
-import {identicalPartGroups,exportBatchFiles} from './identical_parts.js?build=51e1359c8d2b';
+import init,{BrowserConversion,BrowserPlate,BrowserPlateBatch,BrowserStepAssembly,browser_assembly_sample,browser_step_preview,browser_plate_sample,browser_profile_sample} from './pkg/step_dstv_core.js?build=c28d2b169b98';
+import {detectStep} from './step_detection.js?build=c28d2b169b98';
+import {parseDxfPreview} from './dxf_preview.js?build=c28d2b169b98';
+import {identicalPartGroups,exportBatchFiles} from './identical_parts.js?build=c28d2b169b98';
 let conversion=null,batch=null,parts=[],activePart=0,batchKind=null;
 function clearConversion(){conversion?.free();conversion=null;batch=null;parts=[];activePart=0;batchKind=null;}
-await init({module_or_path:new URL('./pkg/step_dstv_core_bg.wasm?build=51e1359c8d2b',import.meta.url)});
-self.postMessage({type:'ready',build:'51e1359c8d2b'});
+await init({module_or_path:new URL('./pkg/step_dstv_core_bg.wasm?build=c28d2b169b98',import.meta.url)});
+self.postMessage({type:'ready',build:'c28d2b169b98'});
 self.onmessage=({data})=>{
   const {id,type}=data;
   let loadedText;
@@ -24,7 +24,7 @@ self.onmessage=({data})=>{
         let drawing=null,previewError='';
         try{drawing=parseDxfPreview(text);}catch(error){previewError=String(error);}
         const check=data.checkDxf===true;
-        self.postMessage({id,type:'dxf-preview',drawing,text:loadedText,pending:check,message:previewError?`DXF preview unavailable: ${previewError}. No geometry has been checked.`:'DXF drawing loaded · not checked. Confirm units, thickness and cutting layers, then choose Check DXF.'});
+        self.postMessage({id,type:'dxf-preview',drawing,text:loadedText,pending:check,previewError,message:previewError?`DXF preview unavailable: ${previewError}. No geometry has been checked.`:'DXF drawing loaded · not checked. Confirm units, thickness and cutting layers, then choose Check DXF.'});
         if(!check)return;
         const options=data.dxfOptions;
         const layers=options?.cutting_layers??(options?.cutting_layer?[options.cutting_layer]:[]);
@@ -44,7 +44,7 @@ self.onmessage=({data})=>{
           loadedMesh=preview.mesh;
           self.postMessage({id,type:'step-preview',...preview,text:loadedText,message:'STEP preview ready · checking member details…'});
         }catch(error){
-          self.postMessage({id,type:'step-preview',mesh:null,text:loadedText,message:`STEP preview unavailable: ${String(error)}. Continuing geometry checks…`});
+          self.postMessage({id,type:'step-preview',mesh:null,text:loadedText,previewError:String(error),message:`STEP preview unavailable: ${String(error)}. Continuing geometry checks…`});
         }
         const progress=message=>self.postMessage({id,type:'step-progress',message});
         progress('Checking STEP occurrences and supported geometry…');
@@ -82,6 +82,6 @@ self.onmessage=({data})=>{
     }else throw new Error('Unknown converter request.');
   }catch(error){
     if(type==='load'||type==='select-part'){clearConversion();}
-    self.postMessage({id,type:'error',clearParts:type==='select-part',message:String(error),recognitionChecks:error?.recognitionChecks,text:loadedText,mesh:loadedMesh??error?.previewMesh});
+    self.postMessage({id,type:'error',clearParts:type==='select-part',message:String(error),errorName:error?.name,errorCode:error?.code,recognitionChecks:error?.recognitionChecks,text:loadedText,mesh:loadedMesh??error?.previewMesh});
   }
 };
