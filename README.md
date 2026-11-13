@@ -1,5 +1,12 @@
 # STEP / DXF to DSTV converter — experimental browser preview
 
+13 November 2026 reviewed marking update: SI text appears inside its blue
+reserved box. Drag inside the box to update X/Q on the selected face, or enter
+coordinates directly. Preview lettering scales to fit; the machine font may
+differ and still requires confirmation. Moving the marking clears the previous
+NC1 result. Export rechecks the entire envelope against current material and
+refuses placements over cuts or beyond an edge. Geometry and WASM are unchanged.
+
 13 November 2026 reviewed update: Report a problem is always available, with an
 additional action beside failures. Review safe local diagnostics, copy or download
 without a GitHub account, or open a public GitHub issue draft to paste and submit

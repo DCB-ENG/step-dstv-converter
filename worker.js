@@ -1,11 +1,11 @@
-import init,{BrowserConversion,BrowserPlate,BrowserPlateBatch,BrowserStepAssembly,browser_assembly_sample,browser_step_preview,browser_plate_sample,browser_profile_sample} from './pkg/step_dstv_core.js?build=c28d2b169b98';
-import {detectStep} from './step_detection.js?build=c28d2b169b98';
-import {parseDxfPreview} from './dxf_preview.js?build=c28d2b169b98';
-import {identicalPartGroups,exportBatchFiles} from './identical_parts.js?build=c28d2b169b98';
+import init,{BrowserConversion,BrowserPlate,BrowserPlateBatch,BrowserStepAssembly,browser_assembly_sample,browser_step_preview,browser_plate_sample,browser_profile_sample} from './pkg/step_dstv_core.js?build=74b578752c51';
+import {detectStep} from './step_detection.js?build=74b578752c51';
+import {parseDxfPreview} from './dxf_preview.js?build=74b578752c51';
+import {identicalPartGroups,exportBatchFiles} from './identical_parts.js?build=74b578752c51';
 let conversion=null,batch=null,parts=[],activePart=0,batchKind=null;
 function clearConversion(){conversion?.free();conversion=null;batch=null;parts=[];activePart=0;batchKind=null;}
-await init({module_or_path:new URL('./pkg/step_dstv_core_bg.wasm?build=c28d2b169b98',import.meta.url)});
-self.postMessage({type:'ready',build:'c28d2b169b98'});
+await init({module_or_path:new URL('./pkg/step_dstv_core_bg.wasm?build=74b578752c51',import.meta.url)});
+self.postMessage({type:'ready',build:'74b578752c51'});
 self.onmessage=({data})=>{
   const {id,type}=data;
   let loadedText;

@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'">
-  <script src="report_startup.js?build=c28d2b169b98"></script>
+  <script src="report_startup.js?build=74b578752c51"></script>
   <title>STEP / DXF to DSTV (NC1) Converter | SolidCraftDSTV</title>
   <meta name="description" content="Free experimental browser-based STEP and DXF to DSTV (NC1) converter. Preview supported RHS, SHS, PFC, angle, I-section and plate geometry. Files stay in your browser.">
   <link rel="canonical" href="https://dcb-eng.github.io/step-dstv-converter/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="STEP / DXF to DSTV (NC1) Converter | SolidCraftDSTV">
   <meta property="og:description" content="Convert supported steel section and plate geometry into DSTV NC1 files locally in your browser. Experimental preview.">
-  <meta property="og:url" content="https://dcb-eng.github.io/step-dstv-converter/"><link rel="stylesheet" href="style.css?build=c28d2b169b98">
+  <meta property="og:url" content="https://dcb-eng.github.io/step-dstv-converter/"><link rel="stylesheet" href="style.css?build=74b578752c51">
 </head>
 <body>
   <header><a class="brand" href="./">SC<span>/</span>DSTV</a><span class="badge">BROWSER PREVIEW · 0.1</span><span class="privacy">Files stay in your browser</span><button id="report-problem" class="button quiet" type="button">Report a problem</button></header>
@@ -49,12 +49,12 @@
           <p class="hint" id="part-mark-hint">Load a file to use its name. You can edit the part mark.</p>
           <label class="confirm"><input id="shaped-holes" type="checkbox" checked><span>Encode standard obround/rectangular plate holes as BO slots</span></label>
           <details id="marking-controls"><summary>Part marking · SI text / PU contour</summary>
-            <p class="hint">Use the displayed DSTV X/q frame. Blue is the reserved SI text box; amber is the PU path. Markings are checked against the current flat material. New files clear marking selection.</p>
+            <p class="hint">Use the displayed DSTV X/q frame. Drag the blue SI text box to position it; X and Q update as you move. Use the matching face view for easier placement. Amber is the PU path. Markings are checked against the current flat material. New files clear marking selection.</p>
             <label class="confirm"><input id="si-enabled" type="checkbox"><span>Add SI text marking</span></label>
             <div id="si-fields" hidden>
               <label class="confirm si-link"><input id="si-use-part-mark" type="checkbox" checked><span>Use part mark as SI text</span></label>
               <label>Text<input id="si-text" maxlength="40" aria-describedby="si-text-help"></label>
-              <p class="hint" id="si-text-help">Follows the current part mark. Typing different text unlinks it. Maximum 40 characters; check the reserved width and machine font.</p>
+              <p class="hint" id="si-text-help">Follows the current part mark. Typing different text unlinks it. Maximum 40 characters. Preview lettering is scaled to fit the box; the actual machine font may differ. Check the reserved width and machine font.</p>
               <div class="field-pair"><div class="field"><div class="field-label"><label for="si-face">SI face</label><button type="button" class="info-button" popovertarget="si-face-help" aria-label="About SI face">i</button></div><select id="si-face" aria-describedby="si-face-help"><option value="v">V</option></select></div><label>Text height (mm)<input id="si-height" type="number" min="1" max="99" step="1" value="6"></label></div>
               <div class="field-pair"><div class="field"><div class="field-label"><label for="si-x">SI X (mm)</label><button type="button" class="info-button" popovertarget="si-x-help" aria-label="About SI X">i</button></div><input id="si-x" type="number" step="any" value="35" aria-describedby="si-x-help"></div><div class="field"><div class="field-label"><label for="si-q">SI Q (mm)</label><button type="button" class="info-button" popovertarget="si-q-help" aria-label="About SI Q">i</button></div><input id="si-q" type="number" step="any" value="40" aria-describedby="si-q-help"></div></div>
               <div id="si-face-help" class="field-help" popover role="dialog" aria-labelledby="si-face-help-title"><h3 id="si-face-help-title">SI face</h3><p>The flat face that carries the text. The letters match the preview: V front, H rear, O top and U under. Only supported marking faces are offered for this part.</p><p>Use the matching face-view button and the DSTV face origins table to check where the text will go.</p><button type="button" class="button quiet" popovertarget="si-face-help" popovertargetaction="hide">Close SI face help</button></div>
@@ -87,9 +87,9 @@
     <details id="hole-details" hidden><summary>Detected wall-hole coordinates</summary><div id="holes"></div></details>
     <details id="slot-details" hidden><summary>Detected edge slots · AK contour coordinates</summary><div id="slots"></div></details>
     <details id="cope-details" hidden><summary>Detected end copes · V/O/U AK coordinates</summary><div id="copes"></div></details>
-    <footer><span>SolidCraftDSTV · experimental browser preview · build c28d2b169b98</span><a href="SOURCE-NOTICE.md">Source & format notes ↗</a></footer>
+    <footer><span>SolidCraftDSTV · experimental browser preview · build 74b578752c51</span><a href="SOURCE-NOTICE.md">Source & format notes ↗</a></footer>
   </main>
-  <dialog id="report-panel" data-build="c28d2b169b98" aria-labelledby="report-title" aria-describedby="report-privacy">
+  <dialog id="report-panel" data-build="74b578752c51" aria-labelledby="report-title" aria-describedby="report-privacy">
     <div class="report-heading"><h2 id="report-title">Report a problem</h2><button id="report-close" class="button quiet" type="button" autofocus>Close</button></div>
     <p id="report-privacy">Prepare a report locally. Nothing is uploaded automatically. Copy and download work without a GitHub account.</p>
     <p class="report-public">GitHub issues and attachments in DCB-ENG/step-dstv-converter are <strong>public</strong>. Review every word before sharing. Remove customer details from your description and any attachments.</p>
@@ -105,8 +105,8 @@
     <p class="hint">Open GitHub report copies this preview and opens a prefilled issue draft in a new tab. Paste the report, review it and submit it yourself. Report content is never put into the draft URL. GitHub may require sign-in.</p>
     <p id="report-feedback" role="status" aria-live="polite"></p>
   </dialog>
-  <script type="module" src="problem_report.js?build=c28d2b169b98"></script>
-  <script type="module" src="app.js?build=c28d2b169b98"></script>
+  <script type="module" src="problem_report.js?build=74b578752c51"></script>
+  <script type="module" src="app.js?build=74b578752c51"></script>
 </body></html>
 
 

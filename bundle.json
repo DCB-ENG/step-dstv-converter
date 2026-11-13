@@ -1,10 +1,10 @@
 {
   "version": "0.1.0",
-  "build": "c28d2b169b98",
+  "build": "74b578752c51",
   "files": [
     {
       "path": "app.js",
-      "sha256": "4a16c3d139c027fbda39b5051d792abb877c9e83f9f1c9d18dd1ea2ad09ca3ee"
+      "sha256": "c351264ea38121ed985514a033751e7d276b1707342dddf928e6f0511acab6c9"
     },
     {
       "path": "dxf_batch.js",
@@ -24,7 +24,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "87af20af686a389fbd9fd3445eed80c3f8d6b4d63eef51dc6db67138487d3e35"
+      "sha256": "f1ff6effd87f503bc6f2ef3c3e150b9a645fa0b2e51bba8181c944021f6626ac"
     },
     {
       "path": "LICENSE-APACHE",
@@ -60,7 +60,7 @@
     },
     {
       "path": "problem_report.js",
-      "sha256": "a73be31c954eac275b8dc15b1d814d6cc664475f300a583282887cddf8aa4106"
+      "sha256": "1682ac7d8ff0734438658ab3100a47fd0b8f1120455c5bc6260ec9c355c28baa"
     },
     {
       "path": "report_diagnostics.js",
@@ -108,11 +108,11 @@
     },
     {
       "path": "viewer.js",
-      "sha256": "aee11756a9bfc3e93b0fc88837548a1a565d850c3bd7f6cc850429fdd8c5416e"
+      "sha256": "7b983a87c2801a2ac3956d3a37badb8e7a93fd7032c3e7b30533a26aa35a775e"
     },
     {
       "path": "worker.js",
-      "sha256": "6081c9b153ce076eaafd71590b3673494b64b096bf9ad4e5b452d4ab2087caee"
+      "sha256": "527e92a8b7f1fdc61b92a7a98a7f9aeed0fb17b7b45589cb830924e2266e3f07"
     }
   ]
 }

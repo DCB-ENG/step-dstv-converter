@@ -10,6 +10,41 @@ export function tubeProfilePoints(analysis,contour){
   return contour.points_mm.map(([x,q])=>facePoint(analysis,contour.face,x,q));
 }
 
+export function textBoxPoints(mark) {
+  const a=mark.angle_deg*Math.PI/180, c=Math.cos(a), s=Math.sin(a);
+  const {x_mm:x,q_mm:q,reserved_width_mm:w,height_mm:h}=mark;
+  return [[x,q],[x+c*w,q+s*w],[x+c*w-s*h,q+s*w+c*h],[x-s*h,q+c*h]];
+}
+
+// Invert the same verified face basis used to draw markings, including angle U.
+export function faceCoordinates(analysis,face,point) {
+  const o=new THREE.Vector3(...facePoint(analysis,face,0,0));
+  const x=new THREE.Vector3(...facePoint(analysis,face,1,0)).sub(o);
+  const q=new THREE.Vector3(...facePoint(analysis,face,0,1)).sub(o);
+  const d=point.clone().sub(o);
+  return [d.dot(x)/x.lengthSq(),d.dot(q)/q.lengthSq()];
+}
+
+function disposeObject(object) {
+  object.geometry.dispose(); object.material.map?.dispose(); object.material.dispose();
+}
+
+function textTexture(mark) {
+  const canvas=document.createElement('canvas');
+  const ratio=mark.reserved_width_mm/mark.height_mm;
+  canvas.width=Math.min(2048,Math.max(64,Math.round(256*ratio)));
+  canvas.height=Math.min(2048,Math.max(64,Math.round(canvas.width/ratio)));
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='rgba(10, 25, 40, 0.45)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  let size=canvas.height*0.8;
+  ctx.font=`600 ${size}px monospace`;
+  size*=Math.min(1,canvas.width*0.94/Math.max(ctx.measureText(mark.text).width,1));
+  ctx.font=`600 ${size}px monospace`;ctx.fillStyle='#ecf5ff';ctx.textBaseline='middle';
+  ctx.fillText(mark.text,canvas.width*0.03,canvas.height/2);
+  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
+  return texture;
+}
+
 // Camera state is display-only. Never rotate the imported mesh or the NC1 frame.
 export function viewFrame(view, analysis) {
   const guide = analysis?.working_faces.find(face => face.face === view);
@@ -51,7 +86,7 @@ export function originGuide(bounds, analysis, view) {
 }
 
 export class StepViewer {
-  constructor(canvas, overlay, caption, onFailure) {
+  constructor(canvas, overlay, caption, onFailure, onMarkingMove) {
     this.canvas = canvas;
     this.overlay = overlay;
     this.caption = caption;
@@ -59,6 +94,9 @@ export class StepViewer {
     this.view = 'iso';
     this.mesh = null;
     this.baseHeight = 1;
+    this.onMarkingMove = onMarkingMove;
+    this.markingEditable = true;
+    this.markingDrag = null;
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     this.renderer.setClearColor(0x11161c, 0);
@@ -71,10 +109,15 @@ export class StepViewer {
     fill.position.set(-2, 1, -1); this.scene.add(fill);
     this.model = new THREE.Group(); this.scene.add(this.model);
     canvas.addEventListener('webglcontextlost', event => {
-      event.preventDefault(); this.available = false; this.controls?.dispose();
+      event.preventDefault(); this.endMarkingDrag(); this.available = false; this.controls?.dispose();
       onFailure('The 3D preview stopped. Reload the page to restore the viewer.');
     });
     canvas.addEventListener('pointerdown', () => canvas.focus({ preventScroll: true }));
+    // Capture a marking before OrbitControls can start orbiting or panning.
+    canvas.addEventListener('pointerdown', event => this.startMarkingDrag(event), true);
+    canvas.addEventListener('pointermove', event => this.moveMarkingDrag(event), true);
+    for(const type of ['pointerup','pointercancel','lostpointercapture'])
+      canvas.addEventListener(type, event => this.endMarkingDrag(event), true);
     canvas.addEventListener('keydown', event => {
       if (!this.mesh || !this.available) return;
       if (['+', '=', '-', 'Home'].includes(event.key)) {
@@ -88,9 +131,10 @@ export class StepViewer {
   }
 
   clear() {
+    this.endMarkingDrag();
     this.controls?.dispose(); this.controls = null;
     for (const child of [...this.model.children]) {
-      child.geometry.dispose(); child.material.dispose(); this.model.remove(child);
+      disposeObject(child); this.model.remove(child);
     }
     this.mesh = null; this.analysis = null; this.arrow = null; this.tags = []; this.overlay.replaceChildren();
     this.caption.textContent = ''; this.render();
@@ -123,13 +167,13 @@ export class StepViewer {
   }
 
   setMarkings(marks) {
-    for(const child of [...this.model.children])if(child.userData.markingFace){child.geometry.dispose();child.material.dispose();this.model.remove(child);}
+    for(const child of [...this.model.children])if(child.userData.markingFace){disposeObject(child);this.model.remove(child);}
     if(!this.analysis)return;
     for(const mark of marks){
       let points=[];
       if(mark.kind==='text'){
-        const a=mark.angle_deg*Math.PI/180,u=[Math.cos(a)*mark.reserved_width_mm,Math.sin(a)*mark.reserved_width_mm],v=[-Math.sin(a)*mark.height_mm,Math.cos(a)*mark.height_mm],o=[mark.x_mm,mark.q_mm];
-        points=[o,[o[0]+u[0],o[1]+u[1]],[o[0]+u[0]+v[0],o[1]+u[1]+v[1]],[o[0]+v[0],o[1]+v[1]],o];
+        if(!(mark.reserved_width_mm>0&&mark.height_mm>0))continue;
+        points=textBoxPoints(mark);points.push(points[0]);
       }else{
         for(let i=0;i<mark.points_mm.length-1;i++){
           const a=mark.points_mm[i],b=mark.points_mm[i+1],r=mark.radii_mm[i],dx=b[0]-a[0],dy=b[1]-a[1],d=Math.hypot(dx,dy);points.push(a);
@@ -141,13 +185,71 @@ export class StepViewer {
       }
       if(points.some(p=>!p||p.some(x=>!Number.isFinite(x)))||!this.analysis.working_faces.some(f=>f.face===mark.face&&f.machining))continue;
       const world=points.map(p=>new THREE.Vector3(...facePoint(this.analysis,mark.face,p[0],p[1])));
-      const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(world),new THREE.LineBasicMaterial({color:mark.kind==='text'?0xe1e6ec:0xffbd70,depthTest:false}));
+      const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(world),new THREE.LineBasicMaterial({color:mark.kind==='text'?0x7fc6ff:0xffbd70,depthTest:false}));
       line.userData.markingFace=mark.face;line.renderOrder=12;line.visible=this.view==='iso'||this.view===mark.face;this.model.add(line);
+      if(mark.kind==='text'){
+        const geometry=new THREE.BufferGeometry().setFromPoints(world.slice(0,4));
+        geometry.setIndex([0,1,2,0,2,3]);
+        geometry.setAttribute('uv',new THREE.Float32BufferAttribute([0,0,1,0,1,1,0,1],2));
+        const text=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({map:textTexture(mark),transparent:true,side:THREE.DoubleSide,depthTest:false,depthWrite:false}));
+        text.userData.markingFace=mark.face;text.userData.textMark={...mark};
+        text.renderOrder=11;text.visible=line.visible;this.model.add(text);
+      }
     }this.render();
+  }
+
+  setMarkingEditable(editable) {
+    this.markingEditable=editable;
+    if(!editable){this.endMarkingDrag();this.canvas.style.cursor='';}
+  }
+
+  markingRay(event) {
+    const rect=this.canvas.getBoundingClientRect();
+    const pointer=new THREE.Vector2((event.clientX-rect.left)/rect.width*2-1,1-(event.clientY-rect.top)/rect.height*2);
+    this.camera.updateMatrixWorld();this.model.updateMatrixWorld(true);
+    const ray=new THREE.Raycaster();ray.setFromCamera(pointer,this.camera);return ray;
+  }
+
+  markingHit(event) {
+    if(!this.analysis||!this.markingEditable||!this.onMarkingMove||!this.available)return null;
+    return this.markingRay(event).intersectObjects(this.model.children.filter(c=>c.visible&&c.userData.textMark),false)[0]??null;
+  }
+
+  startMarkingDrag(event) {
+    if(this.markingDrag||event.button!==0||event.shiftKey||event.ctrlKey||event.metaKey)return;
+    const hit=this.markingHit(event);if(!hit)return;
+    const mark=hit.object.userData.textMark;
+    const origin=new THREE.Vector3(...facePoint(this.analysis,mark.face,0,0));
+    const x=new THREE.Vector3(...facePoint(this.analysis,mark.face,1,0)).sub(origin);
+    const q=new THREE.Vector3(...facePoint(this.analysis,mark.face,0,1)).sub(origin);
+    const plane=new THREE.Plane().setFromNormalAndCoplanarPoint(x.cross(q).normalize(),origin);
+    if(Math.abs(this.markingRay(event).ray.direction.dot(plane.normal))<1e-6)return;
+    event.preventDefault();event.stopImmediatePropagation();this.canvas.focus({preventScroll:true});
+    this.markingDrag={pointerId:event.pointerId,mark,plane,start:faceCoordinates(this.analysis,mark.face,hit.point)};
+    this.controls.enabled=false;this.canvas.setPointerCapture(event.pointerId);this.canvas.style.cursor='grabbing';
+  }
+
+  moveMarkingDrag(event) {
+    const drag=this.markingDrag;
+    if(!drag){this.canvas.style.cursor=this.markingHit(event)?'grab':'';return;}
+    if(event.pointerId!==drag.pointerId)return;
+    event.preventDefault();event.stopImmediatePropagation();
+    const point=this.markingRay(event).ray.intersectPlane(drag.plane,new THREE.Vector3());if(!point)return;
+    const [x,q]=faceCoordinates(this.analysis,drag.mark.face,point);
+    this.onMarkingMove({x_mm:Number((drag.mark.x_mm+x-drag.start[0]).toFixed(2)),q_mm:Number((drag.mark.q_mm+q-drag.start[1]).toFixed(2))});
+  }
+
+  endMarkingDrag(event) {
+    const drag=this.markingDrag;if(!drag||(event&&event.pointerId!==drag.pointerId))return;
+    event?.preventDefault();event?.stopImmediatePropagation();
+    this.markingDrag=null;if(this.controls)this.controls.enabled=true;
+    if(this.canvas.hasPointerCapture(drag.pointerId))this.canvas.releasePointerCapture(drag.pointerId);
+    this.canvas.style.cursor='';
   }
 
   setView(view) {
     if (!this.mesh || !this.available) return;
+    this.endMarkingDrag();
     this.view = view;
     for(const child of this.model.children)if(child.userData.profileFace)child.visible=child.userData.profileFace===view;
     for(const child of this.model.children)if(child.userData.markingFace)child.visible=view==='iso'||child.userData.markingFace===view;

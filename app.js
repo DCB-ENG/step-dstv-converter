@@ -1,10 +1,10 @@
-import { StepViewer } from './viewer.js?build=c28d2b169b98';
-import { DxfPartReview } from './dxf_batch.js?build=c28d2b169b98';
-import { nc1Zip } from './nc1_zip.js?build=c28d2b169b98';
-import { DxfDrawingPreview } from './dxf_preview.js?build=c28d2b169b98';
-import { NC1_OUTPUT_MODE, partMarkFromFilename } from './export_details.js?build=c28d2b169b98';
-import { reporting } from './problem_report.js?build=c28d2b169b98';
-const BUILD='c28d2b169b98';
+import { StepViewer } from './viewer.js?build=74b578752c51';
+import { DxfPartReview } from './dxf_batch.js?build=74b578752c51';
+import { nc1Zip } from './nc1_zip.js?build=74b578752c51';
+import { DxfDrawingPreview } from './dxf_preview.js?build=74b578752c51';
+import { NC1_OUTPUT_MODE, partMarkFromFilename } from './export_details.js?build=74b578752c51';
+import { reporting } from './problem_report.js?build=74b578752c51';
+const BUILD='74b578752c51';
 const $=id=>document.getElementById(id);
 let viewer=null,drawingPreview=null,stepPreviewActive=false;
 const selectedCutLayers=new Set();
@@ -100,6 +100,7 @@ function controls(){
   $('orientation-confirmed').disabled=!analysis||busy||!viewer?.available;
   $('profile').disabled=!analysis||busy;
   for(const id of markingFields)$(id).disabled=!analysis||busy;
+  viewer?.setMarkingEditable(Boolean(analysis)&&!busy);
   $('shaped-holes').closest('label').hidden=analysis?.family!=='PLATE';
   $('export').disabled=!eligible();
   for(const id of ['viewer-fit','viewer-reset','viewer-zoom-in','viewer-zoom-out'])$(id).disabled=!drawingPreview?.bounds&&(!mesh||!viewer?.available);
@@ -360,7 +361,11 @@ function viewerFailure(message){
   $('viewer-error').textContent=message;$('viewer-error').hidden=false;controls();
 }
 try {
-  viewer=new StepViewer($('preview'),$('viewer-overlay'),$('viewer-caption'),viewerFailure);
+  viewer=new StepViewer($('preview'),$('viewer-overlay'),$('viewer-caption'),viewerFailure,position=>{
+    if(busy||!analysis||!$('si-enabled').checked)return;
+    $('si-x').value=position.x_mm;$('si-q').value=position.q_mm;
+    invalidate();updateMarkingPreview();status('Marking moved · generate NC1 to check this position.');
+  });
 }catch(error){
   viewerFailure('3D preview unavailable. Enable WebGL 2 in your browser, then reload. '+error.message);
 }
