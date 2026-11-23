@@ -4,19 +4,22 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'">
   <script src="report_startup.js?build=74b578752c51"></script>
-  <title>STEP / DXF to DSTV (NC1) Converter | SolidCraftDSTV</title>
-  <meta name="description" content="Free experimental browser-based STEP and DXF to DSTV (NC1) converter. Preview supported RHS, SHS, PFC, angle, I-section and plate geometry. Files stay in your browser.">
+  <title>STEP / DXF to DSTV (NC1) Converter | DCB ENG</title>
+  <meta name="description" content="Free experimental STEP and DXF to DSTV (NC1) converter by DCB ENG. Check supported RHS, SHS, PFC, angle, I-section and plate geometry in your browser.">
   <link rel="canonical" href="https://dcb-eng.github.io/step-dstv-converter/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="STEP / DXF to DSTV (NC1) Converter | SolidCraftDSTV">
-  <meta property="og:description" content="Convert supported steel section and plate geometry into DSTV NC1 files locally in your browser. Experimental preview.">
-  <meta property="og:url" content="https://dcb-eng.github.io/step-dstv-converter/"><link rel="stylesheet" href="style.css?build=20261113-nav-orange">
+  <meta property="og:title" content="STEP / DXF to DSTV (NC1) Converter | DCB ENG">
+  <meta property="og:description" content="Convert supported steel sections and flat plates from STEP or DXF to DSTV NC1 in your browser. Experimental DCB ENG tool.">
+  <meta property="og:url" content="https://dcb-eng.github.io/step-dstv-converter/">
+  <meta property="og:site_name" content="DCB ENG">
+  <meta property="og:image" content="https://dcb-eng.github.io/dcb_eng_chrome_logo.png">
+  <meta name="twitter:card" content="summary"><link rel="stylesheet" href="style.css?build=20261113-nav-orange">
 </head>
 <body>
   <div class="dcb-nav"><div class="dcb-nav__inner"><a class="dcb-nav__brand" href="https://dcb-eng.github.io/">DCB <span>ENG</span></a><nav class="dcb-nav__links" aria-label="Workshop tools"><a class="dcb-nav__link" href="https://dcb-eng.github.io/">Home</a><a class="dcb-nav__link" href="https://dcb-eng.github.io/steel-nesting/">Steel Nesting</a><a class="dcb-nav__link" href="https://dcb-eng.github.io/steel-weight/">Steel Weight</a><a class="dcb-nav__link" href="https://dcb-eng.github.io/triangle-calculator/">Triangle</a><a class="dcb-nav__link" aria-current="page" href="https://dcb-eng.github.io/step-dstv-converter/">STEP → DSTV</a></nav></div></div>
   <header><a class="brand" href="./">SC<span>/</span>DSTV</a><span class="badge">BROWSER PREVIEW · 0.1</span><span class="privacy">Files stay in your browser</span><button id="report-problem" class="button quiet" type="button">Report a problem</button></header>
   <main>
-    <div class="intro"><p class="eyebrow">STEELWORK / FILE CONVERSION · LOCAL REVIEW</p><h1>STEP / DXF geometry.<br><span>DSTV output.</span></h1><p>Steel sections and flat plates. Plate outlines, analytic arcs, round holes and internal through-cuts are checked against a thickness-aware solid before NC1 output.</p></div>
+    <div class="intro"><p class="eyebrow">STEELWORK / FILE CONVERSION · LOCAL REVIEW</p><h1>STEP / DXF geometry.<br><span>DSTV output.</span></h1><p>Steel sections and flat plates. Plate outlines, analytic arcs, round holes and internal through-cuts are checked against a thickness-aware solid before NC1 output. This free experimental DCB ENG tool processes files locally in your browser.</p></div>
     <section class="workspace" aria-label="STEP converter">
       <div class="model">
         <div class="model-bar"><span id="file-name">No STEP file selected</span><span id="engine-status">Starting geometry engine…</span></div>
