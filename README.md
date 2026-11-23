@@ -1,4 +1,14 @@
-# STEP / DXF to DSTV converter — experimental browser preview
+# DCB ENG STEP / DXF to DSTV (NC1) Converter — Experimental
+
+**[Open the free browser converter](https://dcb-eng.github.io/step-dstv-converter/)** · [DCB ENG engineering tools](https://dcb-eng.github.io/)
+
+DCB ENG's experimental STEP/DXF to DSTV converter generates **NC1 files for CNC structural steel processing** from supported geometry. It runs locally in a web browser; imported workshop files are not uploaded to a conversion server.
+
+The STEP route recognises selected RHS/SHS hollow sections, PFC channels, angles, parallel-flange I-sections, flat plates and bounded STEP assemblies. The DXF route accepts supported flat-plate cutting outlines after the user confirms units, cutting layers and material thickness. Geometry, orientations and output need independent verification before machine use.
+
+This public repository hosts the prebuilt SolidCraftDSTV browser preview, not a general-purpose or guaranteed-production CAD conversion service. See [supported geometry and limitations](SOURCE-NOTICE.md), the detailed conversion paths below, and the separate [DCB ENG website](https://dcb-eng.github.io/).
+
+## Recent reviewed changes
 
 13 November 2026 reviewed marking update: SI text appears inside its blue
 reserved box. Drag inside the box to update X/Q on the selected face, or enter
