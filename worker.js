@@ -1,11 +1,22 @@
-import init,{BrowserConversion,BrowserPlate,BrowserPlateBatch,BrowserStepAssembly,browser_assembly_sample,browser_step_preview,browser_plate_sample,browser_profile_sample} from './pkg/step_dstv_core.js?build=74b578752c51';
-import {detectStep} from './step_detection.js?build=74b578752c51';
-import {parseDxfPreview} from './dxf_preview.js?build=74b578752c51';
-import {identicalPartGroups,exportBatchFiles} from './identical_parts.js?build=74b578752c51';
+import init,{BrowserConversion,BrowserPlate,BrowserPlateBatch,BrowserStepAssembly,browser_assembly_sample,browser_step_preview,browser_plate_sample,browser_profile_sample} from './pkg/step_dstv_core.js?build=fa4b8495aa5d';
+import {detectStep} from './step_detection.js?build=fa4b8495aa5d';
+import {parseDxfPreview} from './dxf_preview.js?build=fa4b8495aa5d';
+import {identicalPartGroups,exportBatchFiles} from './identical_parts.js?build=fa4b8495aa5d';
 let conversion=null,batch=null,parts=[],activePart=0,batchKind=null;
 function clearConversion(){conversion?.free();conversion=null;batch=null;parts=[];activePart=0;batchKind=null;}
-await init({module_or_path:new URL('./pkg/step_dstv_core_bg.wasm?build=74b578752c51',import.meta.url)});
-self.postMessage({type:'ready',build:'74b578752c51'});
+function writeJobNumber(text, jobNumber = '') {
+  if (typeof jobNumber !== 'string' || jobNumber.length > 70 || /[^\x20-\x7e]/.test(jobNumber)) {
+    throw Error('Job number must be at most 70 printable ASCII characters.');
+  }
+  const value = jobNumber.trim();
+  if (!value) return text;
+  // Replace the blank DSTV order identification in the verified writer output.
+  const prefix = text.match(/^ST\r\n\*\* [^\r\n]+\r\n {2}(?=\r\n)/)?.[0];
+  if (!prefix) throw Error('The generated NC1 lacks a blank order identification field.');
+  return prefix + value + text.slice(prefix.length);
+}
+await init({module_or_path:new URL('./pkg/step_dstv_core_bg.wasm?build=fa4b8495aa5d',import.meta.url)});
+self.postMessage({type:'ready',build:'fa4b8495aa5d'});
 self.onmessage=({data})=>{
   const {id,type}=data;
   let loadedText;
@@ -74,11 +85,13 @@ self.onmessage=({data})=>{
     }else if(type==='export-batch'){
       if(!batch||!Array.isArray(data.options)||data.options.length!==parts.length)throw Error('Check the complete batch first.');
       if(batchKind==='step'&&data.combineIdentical)throw Error('Assembly occurrences stay separate; grouping is not supported.');
-      const files=exportBatchFiles(batch,data.options,data.combineIdentical===true);
+      const files=exportBatchFiles(batch,data.options,data.combineIdentical===true)
+        .map(file=>({...file,text:writeJobNumber(file.text,data.jobNumber)}));
       self.postMessage({id,type:'batch-exported',files,combined:data.combineIdentical===true});
     }else if(type==='export'){
       if(!conversion)throw new Error('Load and analyse a supported STEP file first.');
-      self.postMessage({id,type:'exported',text:conversion.export_nc1(JSON.stringify(data.options)),filename:data.options.part_mark+'.nc1'});
+      const text=conversion.export_nc1(JSON.stringify(data.options));
+      self.postMessage({id,type:'exported',text:writeJobNumber(text,data.jobNumber),filename:data.options.part_mark+'.nc1'});
     }else throw new Error('Unknown converter request.');
   }catch(error){
     if(type==='load'||type==='select-part'){clearConversion();}

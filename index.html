@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'">
-  <script src="report_startup.js?build=74b578752c51"></script>
+  <script src="report_startup.js?build=fa4b8495aa5d"></script>
   <title>STEP / DXF to DSTV (NC1) Converter | DCB ENG</title>
   <meta name="description" content="Free experimental STEP and DXF to DSTV (NC1) converter by DCB ENG. Check supported RHS, SHS, PFC, angle, I-section and plate geometry in your browser.">
   <link rel="canonical" href="https://dcb-eng.github.io/step-dstv-converter/">
@@ -13,11 +13,19 @@
   <meta property="og:url" content="https://dcb-eng.github.io/step-dstv-converter/">
   <meta property="og:site_name" content="DCB ENG">
   <meta property="og:image" content="https://dcb-eng.github.io/dcb_eng_chrome_logo.png">
-  <meta name="twitter:card" content="summary"><link rel="stylesheet" href="style.css?build=20261113-nav-orange">
+  <meta name="twitter:card" content="summary"><link rel="stylesheet" href="style.css?build=plugin-ba2f8e2a40bc">
 </head>
 <body>
   <div class="dcb-nav"><div class="dcb-nav__inner"><a class="dcb-nav__brand" href="https://dcb-eng.github.io/">DCB <span>ENG</span></a><nav class="dcb-nav__links" aria-label="Workshop tools"><a class="dcb-nav__link" href="https://dcb-eng.github.io/">Home</a><a class="dcb-nav__link" href="https://dcb-eng.github.io/steel-nesting/">Steel Nesting</a><a class="dcb-nav__link" href="https://dcb-eng.github.io/steel-weight/">Steel Weight</a><a class="dcb-nav__link" href="https://dcb-eng.github.io/triangle-calculator/">Triangle</a><a class="dcb-nav__link" aria-current="page" href="https://dcb-eng.github.io/step-dstv-converter/">STEP → DSTV</a></nav></div></div>
-  <header><a class="brand" href="./">SC<span>/</span>DSTV</a><span class="badge">BROWSER PREVIEW · 0.1</span><span class="privacy">Files stay in your browser</span><button id="report-problem" class="button quiet" type="button">Report a problem</button></header>
+  <header>
+    <a class="brand" href="./">SC<span>/</span>DSTV</a>
+    <span class="badge">BROWSER PREVIEW · 0.1</span>
+    <span class="privacy">Files stay in your browser</span>
+    <div class="header-actions">
+      <a class="button plugin-download" href="https://github.com/DCB-ENG/solidcraft-nc1-plugin/releases/tag/v0.2.5" target="_blank" rel="noopener noreferrer">Download SolidCraft plugin</a>
+      <button id="report-problem" class="button quiet" type="button">Report a problem</button>
+    </div>
+  </header>
   <main>
     <div class="intro"><p class="eyebrow">STEELWORK / FILE CONVERSION · LOCAL REVIEW</p><h1>STEP / DXF geometry.<br><span>DSTV output.</span></h1><p>Steel sections and flat plates. Plate outlines, analytic arcs, round holes and internal through-cuts are checked against a thickness-aware solid before NC1 output. This free experimental DCB ENG tool processes files locally in your browser.</p></div>
     <section class="workspace" aria-label="STEP converter">
@@ -49,6 +57,8 @@
         <div class="step-label"><span>03</span> NC1 DETAILS</div>
         <form id="export-form">
           <label>Section designation<input id="profile" maxlength="80" placeholder="Detected from geometry" required disabled></label>
+          <label>Job number<input id="job-number" maxlength="70" pattern="[\x20-\x7e]*" autocomplete="off" aria-describedby="job-number-hint"></label>
+          <p class="hint" id="job-number-hint" aria-live="polite">Optional. Saved in each NC1 header.</p>
           <div class="field-pair"><label><span id="part-mark-label">Part mark</span><input id="part-mark" value="MEMBER_01" pattern="[A-Za-z0-9_-]+" maxlength="70" required></label><label><span id="quantity-label">Quantity</span><input id="quantity" type="number" min="1" max="9999" value="1" required></label></div>
           <p class="hint" id="part-mark-hint">Load a file to use its name. You can edit the part mark.</p>
           <label class="confirm"><input id="shaped-holes" type="checkbox" checked><span>Encode standard obround/rectangular plate holes as BO slots</span></label>
@@ -91,9 +101,9 @@
     <details id="hole-details" hidden><summary>Detected wall-hole coordinates</summary><div id="holes"></div></details>
     <details id="slot-details" hidden><summary>Detected edge slots · AK contour coordinates</summary><div id="slots"></div></details>
     <details id="cope-details" hidden><summary>Detected end copes · V/O/U AK coordinates</summary><div id="copes"></div></details>
-    <footer><span>SolidCraftDSTV · experimental browser preview · build 74b578752c51</span><a href="SOURCE-NOTICE.md">Source & format notes ↗</a></footer>
+    <footer><span>SolidCraftDSTV · experimental browser preview · build fa4b8495aa5d</span><a href="SOURCE-NOTICE.md">Source & format notes ↗</a></footer>
   </main>
-  <dialog id="report-panel" data-build="74b578752c51" aria-labelledby="report-title" aria-describedby="report-privacy">
+  <dialog id="report-panel" data-build="fa4b8495aa5d" aria-labelledby="report-title" aria-describedby="report-privacy">
     <div class="report-heading"><h2 id="report-title">Report a problem</h2><button id="report-close" class="button quiet" type="button" autofocus>Close</button></div>
     <p id="report-privacy">Prepare a report locally. Nothing is uploaded automatically. Copy and download work without a GitHub account.</p>
     <p class="report-public">GitHub issues and attachments in DCB-ENG/step-dstv-converter are <strong>public</strong>. Review every word before sharing. Remove customer details from your description and any attachments.</p>
@@ -109,8 +119,8 @@
     <p class="hint">Open GitHub report copies this preview and opens a prefilled issue draft in a new tab. Paste the report, review it and submit it yourself. Report content is never put into the draft URL. GitHub may require sign-in.</p>
     <p id="report-feedback" role="status" aria-live="polite"></p>
   </dialog>
-  <script type="module" src="problem_report.js?build=74b578752c51"></script>
-  <script type="module" src="app.js?build=74b578752c51"></script>
+  <script type="module" src="problem_report.js?build=fa4b8495aa5d"></script>
+  <script type="module" src="app.js?build=fa4b8495aa5d"></script>
 </body></html>
 
 

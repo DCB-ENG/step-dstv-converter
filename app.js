@@ -1,10 +1,10 @@
-import { StepViewer } from './viewer.js?build=74b578752c51';
-import { DxfPartReview } from './dxf_batch.js?build=74b578752c51';
-import { nc1Zip } from './nc1_zip.js?build=74b578752c51';
-import { DxfDrawingPreview } from './dxf_preview.js?build=74b578752c51';
-import { NC1_OUTPUT_MODE, partMarkFromFilename } from './export_details.js?build=74b578752c51';
-import { reporting } from './problem_report.js?build=74b578752c51';
-const BUILD='74b578752c51';
+import { StepViewer } from './viewer.js?build=fa4b8495aa5d';
+import { DxfPartReview } from './dxf_batch.js?build=fa4b8495aa5d';
+import { nc1Zip } from './nc1_zip.js?build=fa4b8495aa5d';
+import { DxfDrawingPreview } from './dxf_preview.js?build=fa4b8495aa5d';
+import { NC1_OUTPUT_MODE, partMarkFromFilename } from './export_details.js?build=fa4b8495aa5d';
+import { reporting } from './problem_report.js?build=fa4b8495aa5d';
+const BUILD='fa4b8495aa5d';
 const $=id=>document.getElementById(id);
 let viewer=null,drawingPreview=null,stepPreviewActive=false;
 const selectedCutLayers=new Set();
@@ -15,7 +15,7 @@ let worker,busy=false,ready=false,serial=0,currentText=null,mesh=null,analysis=n
 const orientations=()=>({length_axis:$('length-axis').value,up_axis:$('up-axis').value});
 reporting.settings(()=>({input_kind:$('input-kind').value,...orientations(),mitre_tolerance_mm:Number($('mitre-tolerance').value),tube_reverse_up:$('tube-reverse-up').checked,tube_reverse_length:$('tube-reverse-length').checked,output_mode:NC1_OUTPUT_MODE}));
 function sendRequest(request){reporting.begin(request.type);reporting.stage(request.type.startsWith('export')?'export-check':'geometry-check');worker.postMessage(request);}
-const outputFields=['part-mark','quantity','grade','grade-custom','profile','orientation-confirmed'];
+const outputFields=['job-number','part-mark','quantity','grade','grade-custom','profile','orientation-confirmed'];
 const markingFields=['si-enabled','si-use-part-mark','si-face','si-text','si-x','si-q','si-angle','si-height','si-width','si-font-confirmed','pu-enabled','pu-face','pu-stroke','pu-points','shaped-holes'];
 function resetSiTextLink(){$('si-use-part-mark').checked=true;$('si-text').value='';$('si-font-confirmed').checked=false;}
 function syncSiText(){
@@ -93,7 +93,7 @@ function controls(){
   for(const id of ['step-file','replace-file','sample-plain','sample-holes','sample-family'])$(id).disabled=!ready||busy;
   for(const id of ['length-axis','up-axis'])$(id).disabled=!currentText||busy||inputKind()==='plate-dxf'||Boolean(analysis?.source_frame)||assembly;
   for(const id of ['tube-reverse-up','tube-reverse-length'])$(id).disabled=busy||!analysis?.tube_end_profiles||assembly;
-  for(const id of ['part-mark','quantity','grade'])$(id).disabled=busy;
+  for(const id of ['job-number','part-mark','quantity','grade'])$(id).disabled=busy;
   $('mitre-tolerance').disabled=!ready||busy||inputKind()==='plate-dxf'||analysis?.family==='PLATE'||Boolean(analysis?.end_copes?.length)||Boolean(analysis?.tube_end_profiles)||Boolean(analysis?.section_cuts)||assembly;
   $('recheck-tolerance').disabled=!ready||busy||!currentText||!$('mitre-tolerance').checkValidity()||assembly;
   $('check-dxf').disabled=!ready||busy||!currentText||inputKind()!=='plate-dxf';
@@ -305,11 +305,16 @@ $('mitre-tolerance').addEventListener('input',()=>{
 $('check-dxf').addEventListener('click',()=>load(currentText,{checkDxf:true}));
 $('recheck-tolerance').addEventListener('click',()=>{load(currentText,{checkDxf:inputKind()==='plate-dxf',detectOrientation:!toleranceHadAnalysis});toleranceHadAnalysis=false;});
 for(const id of outputFields)$(id).addEventListener('input',()=>{if(id==='orientation-confirmed')partReview.confirm($('orientation-confirmed').checked);invalidate();if(id==='part-mark')updateMarkingPreview();});
+$('job-number').addEventListener('input',()=>{
+  $('job-number-hint').textContent=$('job-number').validity.patternMismatch
+    ? 'Use unaccented letters, numbers, spaces or standard punctuation.'
+    : 'Optional. Saved in each NC1 header.';
+});
 for(const id of markingFields)$(id).addEventListener('input',()=>{if(id==='si-text')$('si-use-part-mark').checked=false;if(['si-text','si-use-part-mark','si-height','si-width'].includes(id))$('si-font-confirmed').checked=false;invalidate();updateMarkingPreview();});
 $('dxf-grouping').addEventListener('change',()=>{partReview.combineIdentical=$('dxf-grouping').value==='combined';invalidate();});
 $('dxf-part-select').addEventListener('change',()=>selectDxfPart(Number($('dxf-part-select').value)));
-$('export-form').addEventListener('submit',event=>{event.preventDefault();if(partReview.combineIdentical||!eligible())return;let options;try{options=partReview.options(exportRequest(true));}catch(e){status(e.message,'error');return;}setBusy(true,'Rechecking the current solid and generating NC1…');sendRequest({id:++serial,type:'export',options});});
-$('export-batch').addEventListener('click',()=>{if($('export-batch').disabled)return;let options;try{options=partReview.allOptions(exportRequest());}catch(e){status(e.message,'error');return;}setBusy(true,'Rechecking every part and preparing the NC1 ZIP…');sendRequest({id:++serial,type:'export-batch',options,combineIdentical:partReview.combineIdentical});});
+$('export-form').addEventListener('submit',event=>{event.preventDefault();if(partReview.combineIdentical||!eligible())return;let options;try{options=partReview.options(exportRequest(true));}catch(e){status(e.message,'error');return;}setBusy(true,'Rechecking the current solid and generating NC1…');sendRequest({id:++serial,type:'export',options,jobNumber:$('job-number').value});});
+$('export-batch').addEventListener('click',()=>{if($('export-batch').disabled)return;let options;try{options=partReview.allOptions(exportRequest());}catch(e){status(e.message,'error');return;}setBusy(true,'Rechecking every part and preparing the NC1 ZIP…');sendRequest({id:++serial,type:'export-batch',options,jobNumber:$('job-number').value,combineIdentical:partReview.combineIdentical});});
 $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('nc1').textContent);$('copy').textContent='Copied';}catch{$('copy').textContent='Select text to copy';}});
 function selectView(name){view=name;for(const b of document.querySelectorAll('[data-view]'))b.classList.toggle('active',b.dataset.view===name);viewer?.setView(name);}
 for(const button of document.querySelectorAll('[data-view]'))button.addEventListener('click',()=>selectView(button.dataset.view));

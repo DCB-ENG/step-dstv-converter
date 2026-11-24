@@ -1,10 +1,10 @@
 {
   "version": "0.1.0",
-  "build": "74b578752c51",
+  "build": "fa4b8495aa5d",
   "files": [
     {
       "path": "app.js",
-      "sha256": "c351264ea38121ed985514a033751e7d276b1707342dddf928e6f0511acab6c9"
+      "sha256": "62622978a6cf2ebec585b9d39b0e0121377c88a5df43701450a35ad5c05c047c"
     },
     {
       "path": "dxf_batch.js",
@@ -24,7 +24,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "f1ff6effd87f503bc6f2ef3c3e150b9a645fa0b2e51bba8181c944021f6626ac"
+      "sha256": "57dab89ee7ab744dbaff1b59c584517e4ccc6b345afc81b6756bf6d0ef786b5f"
     },
     {
       "path": "LICENSE-APACHE",
@@ -60,7 +60,7 @@
     },
     {
       "path": "problem_report.js",
-      "sha256": "1682ac7d8ff0734438658ab3100a47fd0b8f1120455c5bc6260ec9c355c28baa"
+      "sha256": "fcc24c14b27340d61578d4ad1b9df892e05393569ecfa24d6a89ee7cd448f3a8"
     },
     {
       "path": "report_diagnostics.js",
@@ -80,7 +80,7 @@
     },
     {
       "path": "style.css",
-      "sha256": "6a1ea618d8a9a4337df2c4cbacf3eee4e53f2d1c7f78a16fbdf45fc44897808a"
+      "sha256": "ba2f8e2a40bc1689523cc0cf130cf7571e8452b13b7a37effd446a96a6f7ad85"
     },
     {
       "path": "THIRD-PARTY-LICENSES.txt",
@@ -112,7 +112,7 @@
     },
     {
       "path": "worker.js",
-      "sha256": "527e92a8b7f1fdc61b92a7a98a7f9aeed0fb17b7b45589cb830924e2266e3f07"
+      "sha256": "525cada4d4f35733c2129fca9a553274b9a2c21dce3d048268f258794b18d9a3"
     }
   ]
 }
