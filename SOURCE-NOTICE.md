@@ -224,8 +224,10 @@ O/U q starts at the back edge, toward the front. Channel/angle X is shared by al
 faces in a right-handed frame; angle U is the outside of the second leg. Arc
 signs/winding are transformed consistently. Historical Fusion coordinates are
 retained only for internal writer-parity checks, not normal output.
-Up to sixteen separate round drills and sixteen bounded angle edge slots are
-supported; enclosed section pockets and other unrecognised cuts are refused.
+Square-ended I-sections support up to 32 separate round through-holes. Standard
+tube, channel and angle routes, and mitred or coped I-sections, retain the
+16-hole limit. Up to 16 bounded angle edge slots are supported. Enclosed section
+pockets and other unrecognised cuts are refused.
 
 ## Profiled RHS/SHS ends: four-face ProCAM route
 
@@ -283,11 +285,14 @@ is used where a plane-cut Boolean was insufficiently accurate for rounded roots.
 ## Flat plates from STEP or DXF
 
 One flat constant-thickness plate with an external line/arc outline, round
-through-holes and closed internal through-cuts. Initial budgets are 400 mm body
-diagonal, 0.1-200 mm thickness smaller than both broad-face spans, 512 faces,
-2048 edges, 512 analytic spans and 32 internal loops. STEP requires two unsplit
-parallel broad faces. Bevels, countersinks, blind pockets and unsupported curves
-are refused.
+through-holes and closed internal through-cuts. The plate path allows a
+3,400 mm body diagonal, covering 1,500 × 3,000 mm stock. The other budgets
+are 0.1–200 mm thickness smaller than both broad-face spans, 512 faces, 2048
+edges, 512 analytic spans and 32 internal loops. The plate path caps each edge
+projection tolerance at 0.0004 mm and verifies both original cap boundaries
+against rounded NC1 on larger plates within the existing total 0.002 mm budget.
+STEP requires two unsplit parallel broad faces. Bevels, countersinks, blind
+pockets and unsupported curves are refused.
 
 ASCII DXF is limited to 2 MiB and 256 selected entities: LINE, ARC, CIRCLE and
 closed 2D LWPOLYLINE with signed bulges. Units (mm/inch), exact cutting layers and

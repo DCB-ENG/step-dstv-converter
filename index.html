@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'">
-  <script src="report_startup.js?build=fa4b8495aa5d"></script>
+  <script src="report_startup.js?build=1379c980f165"></script>
   <title>STEP / DXF to DSTV (NC1) Converter | DCB ENG</title>
   <meta name="description" content="Free experimental STEP and DXF to DSTV (NC1) converter by DCB ENG. Check supported RHS, SHS, PFC, angle, I-section and plate geometry in your browser.">
   <link rel="canonical" href="https://dcb-eng.github.io/step-dstv-converter/">
@@ -13,7 +13,7 @@
   <meta property="og:url" content="https://dcb-eng.github.io/step-dstv-converter/">
   <meta property="og:site_name" content="DCB ENG">
   <meta property="og:image" content="https://dcb-eng.github.io/dcb_eng_chrome_logo.png">
-  <meta name="twitter:card" content="summary"><link rel="stylesheet" href="style.css?build=plugin-ba2f8e2a40bc">
+  <meta name="twitter:card" content="summary"><link rel="stylesheet" href="style.css?build=1379c980f165">
 </head>
 <body>
   <div class="dcb-nav"><div class="dcb-nav__inner"><a class="dcb-nav__brand" href="https://dcb-eng.github.io/">DCB <span>ENG</span></a><nav class="dcb-nav__links" aria-label="Workshop tools"><a class="dcb-nav__link" href="https://dcb-eng.github.io/">Home</a><a class="dcb-nav__link" href="https://dcb-eng.github.io/steel-nesting/">Steel Nesting</a><a class="dcb-nav__link" href="https://dcb-eng.github.io/steel-weight/">Steel Weight</a><a class="dcb-nav__link" href="https://dcb-eng.github.io/triangle-calculator/">Triangle</a><a class="dcb-nav__link" aria-current="page" href="https://dcb-eng.github.io/step-dstv-converter/">STEP → DSTV</a></nav></div></div>
@@ -96,14 +96,14 @@
       </aside>
     </section>
     <p class="hint">Local machining slice: optional SI text and closed PU paths; obround/rectangular BO holes and flat-wall notches/windows on verified square stock with an intact end, within a 400 mm body diagonal. New ProCAM/machine acceptance is pending.</p>
-    <section class="details"><div><p class="eyebrow">GEOMETRY ACCOUNTING</p><h2>Every cut must be explained.</h2><p>Square-cut RHS/SHS, symmetric parallel-flange I-sections (UB/UC), channels and equal/unequal angles. Section radii are preserved and round web/flange/leg holes are verified. The current solid is checked again when you export.</p></div><div><p class="eyebrow">SUPPORTED PROFILES</p><p>RHS · SHS · UB/UC · PFC · EA · UA. Axis-aligned members, single solids or STEP assemblies of up to 16 occurrences, up to 16 holes and 16 separate rounded angle edge slots. Simple and compound planar I-section mitres up to 65° total 3D tilt from square, verified spline-encoded I roots and small square end remnants are supported within the selected comparison tolerance (default 0.02 mm). Plates: one constant-thickness solid, square sides, line/arc outline, round holes and internal through-contours; 400 mm diagonal maximum (kernel projection precision). STEP detects supported section or plate geometry and suggests axes; review the origin and directions before export. Ambiguous classification is refused. DXF supports LINE/ARC/CIRCLE/closed LWPOLYLINE with signed bulges and explicit units/layer/thickness. Split broad faces, bevels, countersinks, blind pockets and nested islands are refused. ProCAM plate acceptance is outstanding. I end copes: full flange width, square ends, sharp or tangential circular reliefs, with an intact middle section and retained web. Partial-width cuts, shallow flange-only cuts, drill-style corner reliefs and combined mitre/copes are refused. Profiled RHS/SHS ends: a measured stock frame and four H/U/V/O cutting envelopes include rounded corners within the 0.25 mm ProCAM profile allowance. End-wall bevel angles are not encoded; strict output refuses these non-V cuts. Hidden pockets, separate bores and unbounded/nonplanar end curves remain refused. Multi-plane I ends, combined mitre/copes, tapered/asymmetric I-sections, CHS, unsupported assembly members, unsupported copes, cuts outside the bounded flat-wall routes, blind bores and unrecognised surfaces block export.</p><p id="verification">No geometry has been analysed yet.</p></div></section>
+    <section class="details"><div><p class="eyebrow">GEOMETRY ACCOUNTING</p><h2>Every cut must be explained.</h2><p>Square-cut RHS/SHS, symmetric parallel-flange I-sections (UB/UC), channels and equal/unequal angles. Section radii are preserved and round web/flange/leg holes are verified. The current solid is checked again when you export.</p></div><div><p class="eyebrow">SUPPORTED PROFILES</p><p>RHS · SHS · UB/UC · PFC · EA · UA. Axis-aligned members, single solids or STEP assemblies of up to 16 occurrences, up to 32 round holes on square-ended I-sections, up to 16 round holes on standard tube, channel, angle and machined-end I-section routes, and up to 16 separate rounded angle edge slots. Simple and compound planar I-section mitres up to 65° total 3D tilt from square, verified spline-encoded I roots and small square end remnants are supported within the selected comparison tolerance (default 0.02 mm). Plates: one constant-thickness solid, square sides, line/arc outline, round holes and internal through-contours; 3,400 mm diagonal maximum, covering 1,500 × 3,000 mm sheets. STEP detects supported section or plate geometry and suggests axes; review the origin and directions before export. Ambiguous classification is refused. DXF supports LINE/ARC/CIRCLE/closed LWPOLYLINE with signed bulges and explicit units/layer/thickness. Split broad faces, bevels, countersinks, blind pockets and nested islands are refused. ProCAM plate acceptance is outstanding. I end copes: full flange width, square ends, sharp or tangential circular reliefs, with an intact middle section and retained web. Partial-width cuts, shallow flange-only cuts, drill-style corner reliefs and combined mitre/copes are refused. Profiled RHS/SHS ends: a measured stock frame and four H/U/V/O cutting envelopes include rounded corners within the 0.25 mm ProCAM profile allowance. End-wall bevel angles are not encoded; strict output refuses these non-V cuts. Hidden pockets, separate bores and unbounded/nonplanar end curves remain refused. Multi-plane I ends, combined mitre/copes, tapered/asymmetric I-sections, CHS, unsupported assembly members, unsupported copes, cuts outside the bounded flat-wall routes, blind bores and unrecognised surfaces block export.</p><p id="verification">No geometry has been analysed yet.</p></div></section>
     <section id="result" hidden><div class="result-heading"><h2>Generated NC1</h2><button id="copy">Copy text</button></div><pre id="nc1"></pre></section>
     <details id="hole-details" hidden><summary>Detected wall-hole coordinates</summary><div id="holes"></div></details>
     <details id="slot-details" hidden><summary>Detected edge slots · AK contour coordinates</summary><div id="slots"></div></details>
     <details id="cope-details" hidden><summary>Detected end copes · V/O/U AK coordinates</summary><div id="copes"></div></details>
-    <footer><span>SolidCraftDSTV · experimental browser preview · build fa4b8495aa5d</span><a href="SOURCE-NOTICE.md">Source & format notes ↗</a></footer>
+    <footer><span>SolidCraftDSTV · experimental browser preview · build 1379c980f165</span><a href="SOURCE-NOTICE.md">Source & format notes ↗</a></footer>
   </main>
-  <dialog id="report-panel" data-build="fa4b8495aa5d" aria-labelledby="report-title" aria-describedby="report-privacy">
+  <dialog id="report-panel" data-build="1379c980f165" aria-labelledby="report-title" aria-describedby="report-privacy">
     <div class="report-heading"><h2 id="report-title">Report a problem</h2><button id="report-close" class="button quiet" type="button" autofocus>Close</button></div>
     <p id="report-privacy">Prepare a report locally. Nothing is uploaded automatically. Copy and download work without a GitHub account.</p>
     <p class="report-public">GitHub issues and attachments in DCB-ENG/step-dstv-converter are <strong>public</strong>. Review every word before sharing. Remove customer details from your description and any attachments.</p>
@@ -119,8 +119,8 @@
     <p class="hint">Open GitHub report copies this preview and opens a prefilled issue draft in a new tab. Paste the report, review it and submit it yourself. Report content is never put into the draft URL. GitHub may require sign-in.</p>
     <p id="report-feedback" role="status" aria-live="polite"></p>
   </dialog>
-  <script type="module" src="problem_report.js?build=fa4b8495aa5d"></script>
-  <script type="module" src="app.js?build=fa4b8495aa5d"></script>
+  <script type="module" src="problem_report.js?build=1379c980f165"></script>
+  <script type="module" src="app.js?build=1379c980f165"></script>
 </body></html>
 
 

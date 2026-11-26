@@ -1,14 +1,18 @@
 # DCB ENG STEP / DXF to DSTV (NC1) Converter — Experimental
 
-**[Open the free browser converter](https://dcb-eng.github.io/step-dstv-converter/)** · [DCB ENG engineering tools](https://dcb-eng.github.io/)
+**[Open the free browser converter](https://dcb-eng.github.io/step-dstv-converter/)** ·
+[DCB ENG engineering tools](https://dcb-eng.github.io/)
 
-DCB ENG's experimental STEP/DXF to DSTV converter generates **NC1 files for CNC structural steel processing** from supported geometry. It runs locally in a web browser; imported workshop files are not uploaded to a conversion server.
-
-The STEP route recognises selected RHS/SHS hollow sections, PFC channels, angles, parallel-flange I-sections, flat plates and bounded STEP assemblies. The DXF route accepts supported flat-plate cutting outlines after the user confirms units, cutting layers and material thickness. Geometry, orientations and output need independent verification before machine use.
-
-This public repository hosts the prebuilt SolidCraftDSTV browser preview, not a general-purpose or guaranteed-production CAD conversion service. See [supported geometry and limitations](SOURCE-NOTICE.md), the detailed conversion paths below, and the separate [DCB ENG website](https://dcb-eng.github.io/).
+DCB ENG's experimental STEP/DXF to DSTV converter generates NC1 files for CNC
+structural steel processing from supported geometry. It runs locally in a web
+browser. Imported workshop files stay in the browser.
 
 ## Recent reviewed changes
+
+Flat plates support diagonals up to 3,400 mm, including 1,500 × 3,000 mm stock.
+Square-ended I-sections support up to 32 separate round through-holes. I-sections
+with mitres or copes support up to 16 round through-holes. See the
+[source and format notes](SOURCE-NOTICE.md) for the geometry checks and limits.
 
 13 November 2026 reviewed marking update: SI text appears inside its blue
 reserved box. Drag inside the box to update X/Q on the selected face, or enter
@@ -47,10 +51,11 @@ This is a user-maintained preview, separate from the official SolidCraft website
 ## Supported conversion paths
 
 - STEP: axis-aligned RHS/SHS, PFC, angle or symmetric parallel-flange I solids.
-  Round holes, bounded angle edge slots, simple/compound planar I mitres and
-  full-width square-end I copes are supported within the documented geometry
-  limits. STEP automatically
-  checks section and flat-plate geometry; ambiguous or unsupported solids refuse output.
+  Square-ended I-sections support up to 32 round through-holes. Other supported
+  member routes support up to 16 round through-holes. Bounded angle edge slots,
+  simple/compound planar I mitres and full-width square-end I copes are supported
+  within the documented geometry limits. STEP automatically checks section and
+  flat-plate geometry, and refuses ambiguous or unsupported solids.
 - STEP assemblies: up to 16 solid occurrences, including nested rigid product
   placements. Each member is retained, reviewed and verified independently in
   its part frame, with individual NC1 and complete ZIP output. Unsupported members
@@ -63,7 +68,7 @@ This is a user-maintained preview, separate from the official SolidCraft website
   cutting layers, with line/arc outlines, round holes and internal through-cuts.
   DXF shows a drawing preview before checks, with detected cutting-layer checkboxes.
   Confirm units, cutting layers and thickness before checking cutting geometry.
-  Plate limits are 400 mm diagonal, 512 faces, 2048 edges and 512 analytic spans.
+  Plate limits are 3,400 mm diagonal, 512 faces, 2,048 edges and 512 analytic spans.
   Plate records use 2-5 decimal places as needed
   inside fixed columns, with the same total 0.002 mm geometry check.
 - DXF batches: up to 16 disjoint plates, with a numbered layout, separate origin

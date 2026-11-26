@@ -1,10 +1,10 @@
 {
   "version": "0.1.0",
-  "build": "fa4b8495aa5d",
+  "build": "1379c980f165",
   "files": [
     {
       "path": "app.js",
-      "sha256": "62622978a6cf2ebec585b9d39b0e0121377c88a5df43701450a35ad5c05c047c"
+      "sha256": "4ed6610f06c41288719ff0790774febe0342811e8b3a1d996c37627e541b051f"
     },
     {
       "path": "dxf_batch.js",
@@ -24,7 +24,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "9e8253644d2718080c1007004b5f21f2809ecf0e0bc97129be29ea69ddc070f6"
+      "sha256": "9655057a6bfbbcc8f7ff6cb20ecd552115dae9f6c655b15f0e6e0aa4f2f0fe3d"
     },
     {
       "path": "LICENSE-APACHE",
@@ -52,7 +52,7 @@
     },
     {
       "path": "pkg/step_dstv_core_bg.wasm",
-      "sha256": "fcd606b47fdcdec5fdd58cbd50f6c18365d0515bbd3a2d3114d4d827d8dc7d53"
+      "sha256": "1f069bc6e26e25f427ab5cd020e2d70ebd022b9ce845b3f56aeec23aa097404c"
     },
     {
       "path": "pkg/step_dstv_core_bg.wasm.d.ts",
@@ -60,7 +60,7 @@
     },
     {
       "path": "problem_report.js",
-      "sha256": "fcc24c14b27340d61578d4ad1b9df892e05393569ecfa24d6a89ee7cd448f3a8"
+      "sha256": "19a91358d8848ead3c665b93cccd284cb2ce7f5cfd7c9eabfc504bb0a0cec674"
     },
     {
       "path": "report_diagnostics.js",
@@ -72,7 +72,7 @@
     },
     {
       "path": "SOURCE-NOTICE.md",
-      "sha256": "21ac58215e6049eba16ae452f67d076d6cd7b8aa325b622d6cf054a0ff5c314c"
+      "sha256": "46977cd7a7d3f3f6dcc62845caaa823651de142d05d23c0b38eb0f3d204f0ffc"
     },
     {
       "path": "step_detection.js",
@@ -80,7 +80,7 @@
     },
     {
       "path": "style.css",
-      "sha256": "ba2f8e2a40bc1689523cc0cf130cf7571e8452b13b7a37effd446a96a6f7ad85"
+      "sha256": "a0650c34b30c0e80b8d0532b91486c78841df0036bb4a1b32cfd24e64c1d1711"
     },
     {
       "path": "THIRD-PARTY-LICENSES.txt",
@@ -112,7 +112,7 @@
     },
     {
       "path": "worker.js",
-      "sha256": "525cada4d4f35733c2129fca9a553274b9a2c21dce3d048268f258794b18d9a3"
+      "sha256": "395d9c7503a9efc9890b8e713b22d723939948523e03182a2224cb77c7aa134f"
     }
   ]
 }

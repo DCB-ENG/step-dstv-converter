@@ -1,10 +1,10 @@
-import { StepViewer } from './viewer.js?build=fa4b8495aa5d';
-import { DxfPartReview } from './dxf_batch.js?build=fa4b8495aa5d';
-import { nc1Zip } from './nc1_zip.js?build=fa4b8495aa5d';
-import { DxfDrawingPreview } from './dxf_preview.js?build=fa4b8495aa5d';
-import { NC1_OUTPUT_MODE, partMarkFromFilename } from './export_details.js?build=fa4b8495aa5d';
-import { reporting } from './problem_report.js?build=fa4b8495aa5d';
-const BUILD='fa4b8495aa5d';
+import { StepViewer } from './viewer.js?build=1379c980f165';
+import { DxfPartReview } from './dxf_batch.js?build=1379c980f165';
+import { nc1Zip } from './nc1_zip.js?build=1379c980f165';
+import { DxfDrawingPreview } from './dxf_preview.js?build=1379c980f165';
+import { NC1_OUTPUT_MODE, partMarkFromFilename } from './export_details.js?build=1379c980f165';
+import { reporting } from './problem_report.js?build=1379c980f165';
+const BUILD='1379c980f165';
 const $=id=>document.getElementById(id);
 let viewer=null,drawingPreview=null,stepPreviewActive=false;
 const selectedCutLayers=new Set();

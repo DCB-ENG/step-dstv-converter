@@ -1,4 +1,4 @@
-import {DiagnosticHistory,formatReport,githubDraftUrl} from './report_diagnostics.js?build=fa4b8495aa5d';
+import {DiagnosticHistory,formatReport,githubDraftUrl} from './report_diagnostics.js?build=1379c980f165';
 const $=id=>document.getElementById(id);
 const failureButton=document.createElement('button');failureButton.id='report-failure';failureButton.type='button';failureButton.className='button quiet report-failure';failureButton.textContent='Report this problem';failureButton.hidden=true;$('status').after(failureButton);
 const history=new DiagnosticHistory({build:$('report-panel').dataset.build,userAgent:navigator.userAgent});
