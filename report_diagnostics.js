@@ -70,14 +70,15 @@ export class DiagnosticHistory{
       privacy:'Automatic diagnostics contain static reason summaries only. Raw errors, stack traces, file paths/names, part marks, SI text, layer/member names, job details and file contents are omitted. Nothing is uploaded automatically.'}));
   }
 }
-export function formatReport({observed='unknown',description='',expected='',diagnostics}){
+export function formatReport({observed='unknown',description='',expected='',diagnostics,attachments=[]}){
   const observedKind=['incorrect-preview','incorrect-nc1','conversion-failure','application-problem','unknown'].includes(observed)?observed:'unknown';
-  return `SolidCraftDSTV problem report\n\nObserved problem: ${observedKind}\n\nWhat happened (user supplied):\n${String(description).slice(0,4000)}\n\nWhat I expected (user supplied):\n${String(expected).slice(0,4000)}\n\nTechnical diagnostics:\n${JSON.stringify(diagnostics,null,2)}\n\nAttachments: none included. Any STEP/DXF, NC1 or screenshots must be attached separately by the user after checking permission to share them publicly.\n`;
+  const selected=attachments.length?`Selected for the local report ZIP:\n${attachments.map(a=>`- ${a.filename}: ${a.description}`).join('\n')}\nReview the selected attachments before sharing the ZIP.`:'Attachments: none selected. A local report ZIP can include a STEP, DXF or NC1 file and a screenshot.';
+  return `SolidCraftDSTV problem report\n\nObserved problem: ${observedKind}\n\nWhat happened (user supplied):\n${String(description).slice(0,4000)}\n\nWhat I expected (user supplied):\n${String(expected).slice(0,4000)}\n\nTechnical diagnostics:\n${JSON.stringify(diagnostics,null,2)}\n\n${selected}\n`;
 }
 export function githubDraftUrl(){
   // Fixed text only. Never put diagnostics or user descriptions into a URL.
   const url=new URL('https://github.com/DCB-ENG/step-dstv-converter/issues/new');
   url.searchParams.set('title','Converter problem report');
-  url.searchParams.set('body','Please review before submitting: this repository and its attachments are PUBLIC.\n\nPaste the reviewed report from the converter here (Copy report or Download diagnostic report). The converter does not send diagnostics in this URL or submit this issue.\n\nOptional: attach a STEP/DXF, NC1 or screenshot only if you have permission to share it publicly. Remove customer names, part marks and other confidential details first.');
+  url.searchParams.set('body','This repository and its attachments are PUBLIC.\n\nPaste the reviewed diagnostic text from the converter here. To include your selected file and screenshot, attach the ZIP saved by Download report ZIP. Review the ZIP for confidential information and share it only if you have permission.');
   return url.href;
 }

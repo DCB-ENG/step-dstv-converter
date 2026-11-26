@@ -1,10 +1,10 @@
-import { StepViewer } from './viewer.js?build=1379c980f165';
-import { DxfPartReview } from './dxf_batch.js?build=1379c980f165';
-import { nc1Zip } from './nc1_zip.js?build=1379c980f165';
-import { DxfDrawingPreview } from './dxf_preview.js?build=1379c980f165';
-import { NC1_OUTPUT_MODE, partMarkFromFilename } from './export_details.js?build=1379c980f165';
-import { reporting } from './problem_report.js?build=1379c980f165';
-const BUILD='1379c980f165';
+import { StepViewer } from './viewer.js?build=8d3b837c0a41';
+import { DxfPartReview } from './dxf_batch.js?build=8d3b837c0a41';
+import { nc1Zip } from './nc1_zip.js?build=8d3b837c0a41';
+import { DxfDrawingPreview } from './dxf_preview.js?build=8d3b837c0a41';
+import { NC1_OUTPUT_MODE, partMarkFromFilename } from './export_details.js?build=8d3b837c0a41';
+import { reporting } from './problem_report.js?build=8d3b837c0a41';
+const BUILD='8d3b837c0a41';
 const $=id=>document.getElementById(id);
 let viewer=null,drawingPreview=null,stepPreviewActive=false;
 const selectedCutLayers=new Set();
@@ -17,6 +17,7 @@ reporting.settings(()=>({input_kind:$('input-kind').value,...orientations(),mitr
 function sendRequest(request){reporting.begin(request.type);reporting.stage(request.type.startsWith('export')?'export-check':'geometry-check');worker.postMessage(request);}
 const outputFields=['job-number','part-mark','quantity','grade','grade-custom','profile','orientation-confirmed'];
 const markingFields=['si-enabled','si-use-part-mark','si-face','si-text','si-x','si-q','si-angle','si-height','si-width','si-font-confirmed','pu-enabled','pu-face','pu-stroke','pu-points','shaped-holes'];
+const plateCrossInputs=['plate-cross-thickness','plate-cross-diameter','plate-cross-span'];
 function resetSiTextLink(){$('si-use-part-mark').checked=true;$('si-text').value='';$('si-font-confirmed').checked=false;}
 function syncSiText(){
   let changed=false;
@@ -45,7 +46,49 @@ function markingRequest(requireFont=false){
 }
 function updateMarkingPreview(){
   $('si-fields').hidden=!$('si-enabled').checked;$('pu-fields').hidden=!$('pu-enabled').checked;
-  try{viewer?.setMarkings(markingRequest().markings);$('marking-error').textContent='';}catch(e){viewer?.setMarkings([]);$('marking-error').textContent=e.message;}
+  const rule=plateCrossRule();
+  const crosses=plateCrossHoles(rule).flatMap(h=>{
+    const {x_mm:x,y_mm:q}=h,half=rule.span_mm/2;
+    return [ [[x-half,q],[x+half,q]], [[x,q-half],[x,q+half]] ].map(points_mm=>({kind:'powder',face:'v',points_mm,radii_mm:[0,0]}));
+  });
+  try{viewer?.setMarkings([...markingRequest().markings,...crosses]);$('marking-error').textContent='';}catch(e){viewer?.setMarkings(crosses);$('marking-error').textContent=e.message;}
+}
+function plateCrossRule(){
+  if($('plate-cross-option').hidden||!$('plate-cross-enabled').checked)return null;
+  const [min_thickness_mm,max_diameter_mm,span_mm]=plateCrossInputs.map(id=>$(id).valueAsNumber);
+  if(!(span_mm>=0.1&&span_mm<=3400))return null;
+  if(!$('plate-cross-custom').checked)return {span_mm};
+  if(!(min_thickness_mm>=0.1&&min_thickness_mm<=200&&Number.isFinite(max_diameter_mm)&&max_diameter_mm>0))return null;
+  return {min_thickness_mm,max_diameter_mm,span_mm};
+}
+function plateCrossHoles(rule,part=analysis){
+  // Match the Rust comparison allowance for floating-point measurement noise.
+  if(!rule||part?.family!=='PLATE')return [];
+  if(rule.min_thickness_mm!==undefined&&part.wall_mm+1e-7<rule.min_thickness_mm)return [];
+  const diameterLimit=rule.max_diameter_mm??part.wall_mm;
+  return part.holes.filter(hole=>hole.diameter_mm<=diameterLimit+1e-7);
+}
+function syncPlateCrossControls(){
+  const available=analysis?.family==='PLATE'||partReview.parts.some(part=>part.analysis?.family==='PLATE');
+  const enabled=available&&$('plate-cross-enabled').checked;
+  const custom=enabled&&$('plate-cross-custom').checked;
+  $('plate-cross-option').hidden=!available;
+  $('plate-cross-enabled').disabled=!available||busy;
+  $('plate-cross-fields').hidden=!enabled;
+  $('plate-cross-custom').disabled=!enabled||busy;
+  $('plate-cross-ratio').hidden=custom;
+  $('plate-cross-thresholds').hidden=!custom;
+  for(const id of plateCrossInputs)$(id).disabled=busy||(id==='plate-cross-span'?!enabled:!custom);
+  $('plate-cross-diameter').setCustomValidity($('plate-cross-diameter').valueAsNumber===0?'Enter a positive hole diameter.':'');
+  const summary=$('plate-cross-summary');
+  if(!enabled){summary.textContent='';return;}
+  const rule=plateCrossRule();
+  if(!rule){summary.textContent=custom?'Enter the thickness, diameter and cross span to review the matching holes.':'Enter a cross span to review the matching holes.';return;}
+  const count=plateCrossHoles(rule).length;
+  const total=partReview.parts.reduce((sum,part)=>sum+plateCrossHoles(rule,part.analysis??null).length,0);
+  const active=analysis?.family==='PLATE'?`${count} matching hole${count===1?'':'s'} on this plate.`:'';
+  const batch=partReview.parts.length>1?`The rule applies to all plates in this file (${total} matching hole${total===1?'':'s'}).`:'';
+  summary.textContent=[active,batch].filter(Boolean).join(' ');
 }
 const defaultFaceGuide=$('face-guide').textContent;
 const defaultViewerHelp=$('viewer-help').textContent;
@@ -54,6 +97,7 @@ const inputKind=()=>$('input-kind').value;
 const dxfOptions=()=>({units:$('dxf-units').value,cutting_layers:[...selectedCutLayers],thickness_mm:Number($('plate-thickness').value)});
 function eligible(){return ready&&!busy&&viewer?.available&&analysis&&$('mitre-tolerance').checkValidity()&&(!analysis.mitres||analysis.mitres.comparison_mm===Number($('mitre-tolerance').value))&&$('orientation-confirmed').checked&&$('export-form').checkValidity();}
 function controls(){
+  syncPlateCrossControls();
   syncSiText();
   const customGrade=$('grade').value==='__custom__';
   $('grade-custom-field').hidden=!customGrade;$('grade-custom').required=customGrade;$('grade-custom').disabled=!customGrade||busy;
@@ -69,7 +113,7 @@ function controls(){
   document.querySelector('.workspace').classList.toggle('compound-mode',Boolean(analysis?.mitres?.compound_ends?.some(Boolean)));
   const matching=partReview.groups.filter(g=>g.length>1),combined=multiple&&partReview.combineIdentical;
   $('dxf-identical').hidden=assembly||!multiple||!matching.length;$('dxf-grouping').disabled=busy;$('dxf-grouping').value=combined?'combined':'separate';
-  $('dxf-identical-notice').textContent=matching.length===1?`${matching[0].length} identical unmarked parts detected: ${matching[0].map(i=>partReview.parts[i].name).join(', ')}.`:`${matching.length} sets of identical unmarked parts detected.`;
+  $('dxf-identical-notice').textContent=matching.length===1?`${matching[0].length} parts with matching cutting geometry: ${matching[0].map(i=>partReview.parts[i].name).join(', ')}.`:`${matching.length} sets of parts with matching cutting geometry.`;
   const outputGroups=combined?partReview.groups:partReview.parts.map((_,i)=>[i]),copies=Number($('quantity').value);
   $('dxf-group-summary').textContent=outputGroups.map(g=>`${partReview.parts[g[0]]?.name}: quantity ${copies*g.length}${combined?` (${g.length} occurrence${g.length===1?'':'s'} × ${copies} drawing set${copies===1?'':'s'})`:''}`).join(' · ');
   $('quantity-label').textContent=combined?'Drawing sets':multiple?'Quantity per part':'Quantity';
@@ -79,7 +123,7 @@ function controls(){
   $('part-mark-label').textContent=multiple?'Part mark prefix':'Part mark';$('part-mark').maxLength=multiple?66:70;$('profile').readOnly=multiple;
   $('export-batch').hidden=!multiple;$('batch-export-status').hidden=!multiple;
   let batchReady=false,batchMessage='';
-  if(multiple){try{partReview.allOptions(exportRequest());batchReady=Boolean(analysis)&&$('export-form').checkValidity();batchMessage=combined?`${outputGroups.length} unmarked NC1 file${outputGroups.length===1?'':'s'} with detected quantities. Every occurrence will be rechecked.`:'Every part is confirmed. ZIP exports one unmarked NC1 per part.';}catch(e){batchMessage=e.message;}}
+  if(multiple){try{partReview.allOptions(exportRequest());batchReady=Boolean(analysis)&&$('export-form').checkValidity();batchMessage=combined?`${outputGroups.length} NC1 file${outputGroups.length===1?'':'s'} with detected quantities. Every occurrence will be rechecked.`:'Every part is confirmed. ZIP exports one NC1 per part.';}catch(e){batchMessage=e.message;}}
   $('batch-export-status').textContent=batchMessage;$('export-batch').disabled=!ready||busy||!viewer?.available||!batchReady;
   for(const [i,option]of [...$('dxf-part-select').options].entries())option.textContent=partReview.parts[i]?.name+(partReview.parts[i]?.error?' · BLOCKED':partReview.confirmed.has(i)?' · confirmed':'');
   let selectedFilename='';if(multiple){try{selectedFilename=' · '+partReview.options({part_mark:$('part-mark').value},combined?partReview.groups.find(g=>g.includes(partReview.activePart))[0]:partReview.activePart).part_mark+'.nc1';}catch{selectedFilename=partReview.parts[partReview.activePart]?.error?' · NC1 blocked for this member':' · enter a valid part-mark prefix';}}
@@ -118,7 +162,7 @@ function recognitionDetails(checks=[]){
   }
 }
 function status(message,kind='',reported=false){$('status').textContent=message;$('status').className='status '+kind;if(kind==='error'&&!reported)reporting.failure(message);}
-function reset({keepDrawing=false,keepParts=false}={}){stepPreviewActive=false;$('step-preview-note').hidden=true;recognitionDetails();if(!keepParts){partReview.clear();partMapView.clear();$('dxf-part-select').replaceChildren();}const retained=keepDrawing?drawingPreview:null;drawingPreview=null;drawingView.clear();$('drop-zone').classList.remove('drawing-mode');$('dxf-preview').toggleAttribute('hidden',true);$('preview').hidden=false;$('dxf-preview-note').hidden=true;$('dxf-layers').hidden=true;$('empty').hidden=false;$('input-detection').hidden=true;$('input-detection').textContent='';for(const id of ['si-enabled','pu-enabled','si-font-confirmed'])$(id).checked=false;$('si-fields').hidden=true;$('pu-fields').hidden=true;$('marking-error').textContent='';analysis=null;mesh=null;view='iso';viewer?.clear();for(const b of document.querySelectorAll('[data-view]')){b.hidden=false;b.classList.toggle('active',b.dataset.view==='iso');}$('profile').value='';$('face-guide').textContent=defaultFaceGuide;$('orientation-confirmed').checked=false;$('hole-details').hidden=true;$('slot-details').hidden=true;$('cope-details').hidden=true;$('tube-orientation').hidden=true;$('coordinate-details').hidden=true;$('measurements').replaceChildren();$('verification').textContent='No geometry has been verified.';if(retained)showDrawing(retained);invalidate();}
+function reset({keepDrawing=false,keepParts=false}={}){stepPreviewActive=false;$('step-preview-note').hidden=true;recognitionDetails();if(!keepParts){partReview.clear();partMapView.clear();$('dxf-part-select').replaceChildren();for(const id of ['plate-cross-enabled','plate-cross-custom'])$(id).checked=false;}const retained=keepDrawing?drawingPreview:null;drawingPreview=null;drawingView.clear();$('drop-zone').classList.remove('drawing-mode');$('dxf-preview').toggleAttribute('hidden',true);$('preview').hidden=false;$('dxf-preview-note').hidden=true;$('dxf-layers').hidden=true;$('empty').hidden=false;$('input-detection').hidden=true;$('input-detection').textContent='';for(const id of ['si-enabled','pu-enabled','si-font-confirmed'])$(id).checked=false;$('si-fields').hidden=true;$('pu-fields').hidden=true;$('marking-error').textContent='';analysis=null;mesh=null;view='iso';viewer?.clear();for(const b of document.querySelectorAll('[data-view]')){b.hidden=false;b.classList.toggle('active',b.dataset.view==='iso');}$('profile').value='';$('face-guide').textContent=defaultFaceGuide;$('orientation-confirmed').checked=false;$('hole-details').hidden=true;$('slot-details').hidden=true;$('cope-details').hidden=true;$('tube-orientation').hidden=true;$('coordinate-details').hidden=true;$('measurements').replaceChildren();$('verification').textContent='No geometry has been verified.';if(retained)showDrawing(retained);invalidate();}
 function showDrawing(drawing){
   drawingPreview=drawing;$('drop-zone').classList.add('drawing-mode');
   $('preview').hidden=true;$('viewer-error').hidden=true;$('empty').hidden=true;
@@ -171,7 +215,11 @@ function selectDxfPart(index){
   partReview.select(index);resetTubeSelection();reset({keepDrawing:true,keepParts:true});
   setBusy(true,'Opening the selected part…');sendRequest({id:++serial,type:'select-part',index});
 }
-function exportRequest(requireFont=false){return {part_mark:$('part-mark').value,grade:$('grade').value==='__custom__'?$('grade-custom').value.trim():$('grade').value,quantity:Number($('quantity').value),profile:$('profile').value,mode:NC1_OUTPUT_MODE,orientation_confirmed:$('orientation-confirmed').checked,...markingRequest(requireFont)};}
+function exportRequest(requireFont=false){
+  const rule=plateCrossRule();
+  if(!$('plate-cross-option').hidden&&$('plate-cross-enabled').checked&&!rule)throw Error('Enter valid PU cross settings before export.');
+  return {part_mark:$('part-mark').value,grade:$('grade').value==='__custom__'?$('grade-custom').value.trim():$('grade').value,quantity:Number($('quantity').value),profile:$('profile').value,mode:NC1_OUTPUT_MODE,orientation_confirmed:$('orientation-confirmed').checked,...markingRequest(requireFont),...(rule&&{plate_hole_crosses:rule})};
+}
 function downloadBlob(blob,filename){const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=filename;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}
 function resetTubeSelection(){for(const id of ['tube-reverse-up','tube-reverse-length'])$(id).checked=false;}
 function startWorker(){
@@ -181,6 +229,7 @@ function startWorker(){
     if(data.type==='ready'){if(data.build!==BUILD){status('Converter build mismatch · reload this page before converting.','error');reporting.finish('failure');return;}reporting.stage('complete');reporting.finish();ready=true;$('engine-status').textContent='WASM ENGINE READY · '+BUILD;controls();return;}
     if(data.id!==serial)return;
     if(['step-preview','dxf-preview'].includes(data.type)){reporting.stage('preview');if(data.previewError)reporting.failure(data.previewError);if(data.type==='dxf-preview'&&!data.pending)reporting.finish(data.previewError?'failure':'success');}
+    if(data.type==='dxf-preview'&&data.pending)reporting.stage('geometry-check');
     if(data.type==='step-progress')reporting.stage('recognition');
     if(['error','part-blocked'].includes(data.type)){
       reporting.failure({message:data.message,name:data.errorName},{code:data.errorCode,checks:data.recognitionChecks});reporting.finish('failure');
@@ -267,7 +316,7 @@ function stopWorker(event){
 }
 function load(text,{sample,name,detectOrientation=false,checkDxf=false}={}){
   if(!ready||busy)return;
-  if(sample!==undefined)resetSiTextLink();
+  if(sample!==undefined){reporting.sourceFile(null);resetSiTextLink();}
   if(!$('mitre-tolerance').reportValidity())return;
   toleranceHadAnalysis=false;
   reset();$('empty').querySelector('h2').textContent='Bring in a member or plate';$('empty').querySelector('p').textContent='Drop a STEP for automatic detection, or a DXF outline. DXF needs units, cutting layers and thickness before checking.';if(text!==undefined)currentText=text;else if(sample!==undefined)currentText=null;
@@ -278,6 +327,7 @@ function load(text,{sample,name,detectOrientation=false,checkDxf=false}={}){
 }
 async function fileInput(file){
   if(!file||busy)return;
+  reporting.sourceFile(file);
   reporting.begin('file-read');
   selectedCutLayers.clear();showCutLayerChoices(null);
   if(!/\.(step|stp|dxf)$/i.test(file.name)||file.size>10*1024*1024){reset();currentText=null;status('Choose a .step, .stp or .dxf file up to 10 MiB (DXF core limit 2 MiB).','error');reporting.finish('failure');controls();return;}
@@ -311,6 +361,7 @@ $('job-number').addEventListener('input',()=>{
     : 'Optional. Saved in each NC1 header.';
 });
 for(const id of markingFields)$(id).addEventListener('input',()=>{if(id==='si-text')$('si-use-part-mark').checked=false;if(['si-text','si-use-part-mark','si-height','si-width'].includes(id))$('si-font-confirmed').checked=false;invalidate();updateMarkingPreview();});
+for(const id of ['plate-cross-enabled','plate-cross-custom',...plateCrossInputs])$(id).addEventListener('input',()=>{invalidate();updateMarkingPreview();});
 $('dxf-grouping').addEventListener('change',()=>{partReview.combineIdentical=$('dxf-grouping').value==='combined';invalidate();});
 $('dxf-part-select').addEventListener('change',()=>selectDxfPart(Number($('dxf-part-select').value)));
 $('export-form').addEventListener('submit',event=>{event.preventDefault();if(partReview.combineIdentical||!eligible())return;let options;try{options=partReview.options(exportRequest(true));}catch(e){status(e.message,'error');return;}setBusy(true,'Rechecking the current solid and generating NC1…');sendRequest({id:++serial,type:'export',options,jobNumber:$('job-number').value});});
@@ -374,4 +425,5 @@ try {
 }catch(error){
   viewerFailure('3D preview unavailable. Enable WebGL 2 in your browser, then reload. '+error.message);
 }
+reporting.prepareScreenshot(()=>viewer?.render());
 try{startWorker();}catch(error){stopWorker(error);}controls();

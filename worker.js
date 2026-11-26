@@ -1,7 +1,7 @@
-import init,{BrowserConversion,BrowserPlate,BrowserPlateBatch,BrowserStepAssembly,browser_assembly_sample,browser_step_preview,browser_plate_sample,browser_profile_sample} from './pkg/step_dstv_core.js?build=1379c980f165';
-import {detectStep} from './step_detection.js?build=1379c980f165';
-import {parseDxfPreview} from './dxf_preview.js?build=1379c980f165';
-import {identicalPartGroups,exportBatchFiles} from './identical_parts.js?build=1379c980f165';
+import init,{BrowserConversion,BrowserPlate,BrowserPlateBatch,BrowserStepAssembly,browser_assembly_sample,browser_step_preview,browser_plate_sample,browser_profile_sample} from './pkg/step_dstv_core.js?build=8d3b837c0a41';
+import {detectStep} from './step_detection.js?build=8d3b837c0a41';
+import {parseDxfPreview} from './dxf_preview.js?build=8d3b837c0a41';
+import {identicalPartGroups,exportBatchFiles} from './identical_parts.js?build=8d3b837c0a41';
 let conversion=null,batch=null,parts=[],activePart=0,batchKind=null;
 function clearConversion(){conversion?.free();conversion=null;batch=null;parts=[];activePart=0;batchKind=null;}
 function writeJobNumber(text, jobNumber = '') {
@@ -15,8 +15,8 @@ function writeJobNumber(text, jobNumber = '') {
   if (!prefix) throw Error('The generated NC1 lacks a blank order identification field.');
   return prefix + value + text.slice(prefix.length);
 }
-await init({module_or_path:new URL('./pkg/step_dstv_core_bg.wasm?build=1379c980f165',import.meta.url)});
-self.postMessage({type:'ready',build:'1379c980f165'});
+await init({module_or_path:new URL('./pkg/step_dstv_core_bg.wasm?build=8d3b837c0a41',import.meta.url)});
+self.postMessage({type:'ready',build:'8d3b837c0a41'});
 self.onmessage=({data})=>{
   const {id,type}=data;
   let loadedText;

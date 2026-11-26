@@ -9,6 +9,10 @@ browser. Imported workshop files stay in the browser.
 
 ## Recent reviewed changes
 
+The problem report can include a selected STEP, DXF or NC1 file and a captured
+or saved screenshot in a local ZIP. Attach the reviewed ZIP to the GitHub issue
+if you choose to share it publicly.
+
 Flat plates support diagonals up to 3,400 mm, including 1,500 × 3,000 mm stock.
 Square-ended I-sections support up to 32 separate round through-holes. I-sections
 with mitres or copes support up to 16 round through-holes. See the
@@ -68,9 +72,14 @@ This is a user-maintained preview, separate from the official SolidCraft website
   cutting layers, with line/arc outlines, round holes and internal through-cuts.
   DXF shows a drawing preview before checks, with detected cutting-layer checkboxes.
   Confirm units, cutting layers and thickness before checking cutting geometry.
-  Plate limits are 3,400 mm diagonal, 512 faces, 2,048 edges and 512 analytic spans.
+  Plate limits are 3,400 mm diagonal and 32 internal contours. STEP plates can
+  have coplanar patches on either broad face, up to 1,024 faces, 4,096 edges
+  and 1,024 line or arc spans per cap boundary.
   Plate records use 2-5 decimal places as needed
   inside fixed columns, with the same total 0.002 mm geometry check.
+  An optional rule replaces round holes at or below the plate thickness with
+  face-V PU crosses for later drilling. Custom thickness and diameter limits
+  are available.
 - DXF batches: up to 16 disjoint plates, with a numbered layout, separate origin
   confirmations and individual NC1/ZIP download. Matching unmarked parts can be
   explicitly combined with detected quantities. Full contours, holes and thickness

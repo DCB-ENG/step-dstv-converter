@@ -71,7 +71,8 @@ export function groupedRequests(options,groups){
     for(const index of indices){
       if(!Number.isInteger(index)||index<0||index>=options.length||seen.has(index))throw Error('Every part must occur in exactly one output group.');
       seen.add(index);const option=options[index];first??=option;
-      if(['profile','grade','mode'].some(key=>first[key]!==option[key])||Boolean(first.shaped_holes)!==Boolean(option.shaped_holes))throw Error('Different job details cannot be combined. Keep the parts separate.');
+      const samePlateCrossRule=['min_thickness_mm','max_diameter_mm','span_mm'].every(key=>first.plate_hole_crosses?.[key]===option.plate_hole_crosses?.[key]);
+      if(['profile','grade','mode'].some(key=>first[key]!==option[key])||Boolean(first.shaped_holes)!==Boolean(option.shaped_holes)||!samePlateCrossRule)throw Error('Different job details cannot be combined. Keep the parts separate.');
       total+=option.quantity;
     }
     if(total>9999)throw Error('Combined quantity exceeds 9999. Reduce the number of drawing sets or keep separate.');

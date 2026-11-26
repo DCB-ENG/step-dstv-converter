@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'">
-  <script src="report_startup.js?build=1379c980f165"></script>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' blob:; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'">
+  <script src="report_startup.js?build=8d3b837c0a41"></script>
   <title>STEP / DXF to DSTV (NC1) Converter | DCB ENG</title>
   <meta name="description" content="Free experimental STEP and DXF to DSTV (NC1) converter by DCB ENG. Check supported RHS, SHS, PFC, angle, I-section and plate geometry in your browser.">
   <link rel="canonical" href="https://dcb-eng.github.io/step-dstv-converter/">
@@ -13,7 +13,7 @@
   <meta property="og:url" content="https://dcb-eng.github.io/step-dstv-converter/">
   <meta property="og:site_name" content="DCB ENG">
   <meta property="og:image" content="https://dcb-eng.github.io/dcb_eng_chrome_logo.png">
-  <meta name="twitter:card" content="summary"><link rel="stylesheet" href="style.css?build=1379c980f165">
+  <meta name="twitter:card" content="summary"><link rel="stylesheet" href="style.css?build=8d3b837c0a41">
 </head>
 <body>
   <div class="dcb-nav"><div class="dcb-nav__inner"><a class="dcb-nav__brand" href="https://dcb-eng.github.io/">DCB <span>ENG</span></a><nav class="dcb-nav__links" aria-label="Workshop tools"><a class="dcb-nav__link" href="https://dcb-eng.github.io/">Home</a><a class="dcb-nav__link" href="https://dcb-eng.github.io/steel-nesting/">Steel Nesting</a><a class="dcb-nav__link" href="https://dcb-eng.github.io/steel-weight/">Steel Weight</a><a class="dcb-nav__link" href="https://dcb-eng.github.io/triangle-calculator/">Triangle</a><a class="dcb-nav__link" aria-current="page" href="https://dcb-eng.github.io/step-dstv-converter/">STEP → DSTV</a></nav></div></div>
@@ -43,7 +43,7 @@
         <label>Input path<select id="input-kind"><option value="step">STEP · automatic detection</option><option value="plate-dxf">DXF · flat plate cutting outlines</option></select></label>
         <p id="input-detection" class="hint" hidden></p>
         <div id="dxf-fields" hidden><div class="field-pair"><label>Confirmed DXF units<select id="dxf-units"><option value="">Choose units</option><option value="mm">Millimetres</option><option value="inch">Inches</option></select></label><label>Plate thickness (mm)<input id="plate-thickness" type="number" min="0.1" max="200" step="any" placeholder="Required"></label></div><fieldset id="cutting-layers"><legend>Cutting layers</legend><div id="cut-layer-options"><p class="hint">Load a DXF to choose its cutting layers.</p></div><p id="cut-layer-selection" class="hint">No cutting layers selected.</p></fieldset><p class="hint">Tick every layer to cut (1–16). Unticked layers are excluded. Selected layers are highlighted in orange. Unknown entities, gaps and nesting still block export. DXF XY maps to plate X/up.</p><button id="check-dxf" class="button primary" type="button" disabled>Check DXF &amp; build plate</button><details id="dxf-layers" hidden><summary>Drawing layers and preview coverage</summary><p class="hint">All supported outline entities are shown. Selected cutting layers are orange; other layers are grey. Text and omitted entities are listed below. Preview coordinates use drawing units; units and cutting geometry are not verified.</p><div id="dxf-layer-summary"></div></details></div>
-        <div id="dxf-parts" hidden><div id="dxf-identical" hidden><p id="dxf-identical-notice" role="status"></p><label>Identical-part output<select id="dxf-grouping"><option value="separate">Keep separate parts</option><option value="combined">Combine identical parts and set quantity</option></select></label><p id="dxf-group-summary" class="hint"></p><p class="hint">Unmarked parts only. Every occurrence stays available for review and needs its origin confirmed.</p></div><label><span id="part-kind-label">Detected DXF part</span><select id="dxf-part-select"></select></label><p id="assembly-note" class="hint" hidden>Every solid occurrence stays separate. Review each member in its part frame; axes below refer to that frame. Automatic orientation is fixed for this assembly preview. Unsupported members block the complete ZIP; supported members can be downloaded individually.</p><pre id="assembly-member-detail" class="hint" hidden></pre><p id="dxf-part-progress" class="hint"></p><svg id="dxf-part-map" role="group" aria-label="Detected DXF parts, click a part number" tabindex="0"></svg><p id="dxf-layout-note" class="hint">Drawing layout: click a numbered part to review its solid. Each part has its own X/q origin. Job details apply to every part. Grouping is optional and keeps every occurrence in this layout.</p></div><div id="status" class="status" role="status">Waiting for a STEP file</div>
+        <div id="dxf-parts" hidden><div id="dxf-identical" hidden><p id="dxf-identical-notice" role="status"></p><label>Identical-part output<select id="dxf-grouping"><option value="separate">Keep separate parts</option><option value="combined">Combine identical parts and set quantity</option></select></label><p id="dxf-group-summary" class="hint"></p><p class="hint">Confirm every part origin before export. Manual SI and PU markings are available for individual downloads.</p></div><label><span id="part-kind-label">Detected DXF part</span><select id="dxf-part-select"></select></label><p id="assembly-note" class="hint" hidden>Every solid occurrence stays separate. Review each member in its part frame; axes below refer to that frame. Automatic orientation is fixed for this assembly preview. Unsupported members block the complete ZIP; supported members can be downloaded individually.</p><pre id="assembly-member-detail" class="hint" hidden></pre><p id="dxf-part-progress" class="hint"></p><svg id="dxf-part-map" role="group" aria-label="Detected DXF parts, click a part number" tabindex="0"></svg><p id="dxf-layout-note" class="hint">Drawing layout: click a numbered part to review its solid. Each part has its own X/q origin. Job details apply to every part. Grouping is optional and keeps every occurrence in this layout.</p></div><div id="status" class="status" role="status">Waiting for a STEP file</div>
         <details id="recognition-details" hidden><summary>Why recognition failed · axis checks</summary><p class="hint">Each frame was checked against the complete solid. Changing a profile label cannot override a geometry failure.</p><div id="recognition-checks"></div></details>
         <dl id="measurements"><div><dt>Section</dt><dd>—</dd></div><div><dt>Length</dt><dd>—</dd></div><div><dt>Wall</dt><dd>—</dd></div><div><dt>Outside radius</dt><dd>—</dd></div><div><dt>Wall holes</dt><dd>—</dd></div></dl>
         <div class="step-label"><span>02</span> WORKING DIRECTION</div>
@@ -62,6 +62,20 @@
           <div class="field-pair"><label><span id="part-mark-label">Part mark</span><input id="part-mark" value="MEMBER_01" pattern="[A-Za-z0-9_-]+" maxlength="70" required></label><label><span id="quantity-label">Quantity</span><input id="quantity" type="number" min="1" max="9999" value="1" required></label></div>
           <p class="hint" id="part-mark-hint">Load a file to use its name. You can edit the part mark.</p>
           <label class="confirm"><input id="shaped-holes" type="checkbox" checked><span>Encode standard obround/rectangular plate holes as BO slots</span></label>
+          <div id="plate-cross-option" hidden>
+            <label class="confirm"><input id="plate-cross-enabled" type="checkbox" disabled><span>Replace small plate holes with PU crosses</span></label>
+            <div id="plate-cross-fields" hidden>
+              <p class="hint" id="plate-cross-ratio">Holes at or below the plate thickness qualify. A 6 mm hole in an 8 mm plate becomes a cross.</p>
+              <label class="confirm"><input id="plate-cross-custom" type="checkbox" disabled><span>Use custom thickness and diameter limits</span></label>
+              <div id="plate-cross-thresholds" class="field-pair" hidden>
+                <label>Minimum plate thickness (mm)<input id="plate-cross-thickness" type="number" min="0.1" max="200" step="any" required disabled></label>
+                <label>Maximum hole diameter (mm)<input id="plate-cross-diameter" type="number" min="0" step="any" required disabled></label>
+              </div>
+              <label>Cross span (mm)<input id="plate-cross-span" type="number" min="0.1" max="3400" step="any" value="6" required disabled></label>
+              <p class="hint">Matching round through-holes become two PU marking strokes on face V for later drilling. Amber crosses overlay the source geometry.</p>
+              <p class="hint" id="plate-cross-summary" role="status"></p>
+            </div>
+          </div>
           <details id="marking-controls"><summary>Part marking · SI text / PU contour</summary>
             <p class="hint">Use the displayed DSTV X/q frame. Drag the blue SI text box to position it; X and Q update as you move. Use the matching face view for easier placement. Amber is the PU path. Markings are checked against the current flat material. New files clear marking selection.</p>
             <label class="confirm"><input id="si-enabled" type="checkbox"><span>Add SI text marking</span></label>
@@ -96,14 +110,14 @@
       </aside>
     </section>
     <p class="hint">Local machining slice: optional SI text and closed PU paths; obround/rectangular BO holes and flat-wall notches/windows on verified square stock with an intact end, within a 400 mm body diagonal. New ProCAM/machine acceptance is pending.</p>
-    <section class="details"><div><p class="eyebrow">GEOMETRY ACCOUNTING</p><h2>Every cut must be explained.</h2><p>Square-cut RHS/SHS, symmetric parallel-flange I-sections (UB/UC), channels and equal/unequal angles. Section radii are preserved and round web/flange/leg holes are verified. The current solid is checked again when you export.</p></div><div><p class="eyebrow">SUPPORTED PROFILES</p><p>RHS · SHS · UB/UC · PFC · EA · UA. Axis-aligned members, single solids or STEP assemblies of up to 16 occurrences, up to 32 round holes on square-ended I-sections, up to 16 round holes on standard tube, channel, angle and machined-end I-section routes, and up to 16 separate rounded angle edge slots. Simple and compound planar I-section mitres up to 65° total 3D tilt from square, verified spline-encoded I roots and small square end remnants are supported within the selected comparison tolerance (default 0.02 mm). Plates: one constant-thickness solid, square sides, line/arc outline, round holes and internal through-contours; 3,400 mm diagonal maximum, covering 1,500 × 3,000 mm sheets. STEP detects supported section or plate geometry and suggests axes; review the origin and directions before export. Ambiguous classification is refused. DXF supports LINE/ARC/CIRCLE/closed LWPOLYLINE with signed bulges and explicit units/layer/thickness. Split broad faces, bevels, countersinks, blind pockets and nested islands are refused. ProCAM plate acceptance is outstanding. I end copes: full flange width, square ends, sharp or tangential circular reliefs, with an intact middle section and retained web. Partial-width cuts, shallow flange-only cuts, drill-style corner reliefs and combined mitre/copes are refused. Profiled RHS/SHS ends: a measured stock frame and four H/U/V/O cutting envelopes include rounded corners within the 0.25 mm ProCAM profile allowance. End-wall bevel angles are not encoded; strict output refuses these non-V cuts. Hidden pockets, separate bores and unbounded/nonplanar end curves remain refused. Multi-plane I ends, combined mitre/copes, tapered/asymmetric I-sections, CHS, unsupported assembly members, unsupported copes, cuts outside the bounded flat-wall routes, blind bores and unrecognised surfaces block export.</p><p id="verification">No geometry has been analysed yet.</p></div></section>
+    <section class="details"><div><p class="eyebrow">GEOMETRY ACCOUNTING</p><h2>Every cut must be explained.</h2><p>Square-cut RHS/SHS, symmetric parallel-flange I-sections (UB/UC), channels and equal/unequal angles. Section radii are preserved and round web/flange/leg holes are verified. The current solid is checked again when you export.</p></div><div><p class="eyebrow">SUPPORTED PROFILES</p><p>RHS · SHS · UB/UC · PFC · EA · UA. Axis-aligned members, single solids or STEP assemblies of up to 16 occurrences, up to 32 round holes on square-ended I-sections, up to 16 round holes on standard tube, channel, angle and machined-end I-section routes, and up to 16 separate rounded angle edge slots. Simple and compound planar I-section mitres up to 65° total 3D tilt from square, verified spline-encoded I roots and small square end remnants are supported within the selected comparison tolerance (default 0.02 mm). Plates: one constant-thickness solid, square sides, line/arc outline, round holes and internal through-contours; 3,400 mm diagonal maximum, covering 1,500 × 3,000 mm sheets. STEP detects supported section or plate geometry and suggests axes; review the origin and directions before export. Ambiguous classification is refused. DXF supports LINE/ARC/CIRCLE/closed LWPOLYLINE with signed bulges and explicit units/layer/thickness. STEP plates can have coplanar patches on either broad face. Bevels, countersinks, blind pockets and nested islands are refused. ProCAM plate acceptance is outstanding. I end copes: full flange width, square ends, sharp or tangential circular reliefs, with an intact middle section and retained web. Partial-width cuts, shallow flange-only cuts, drill-style corner reliefs and combined mitre/copes are refused. Profiled RHS/SHS ends: a measured stock frame and four H/U/V/O cutting envelopes include rounded corners within the 0.25 mm ProCAM profile allowance. End-wall bevel angles are not encoded; strict output refuses these non-V cuts. Hidden pockets, separate bores and unbounded/nonplanar end curves remain refused. Multi-plane I ends, combined mitre/copes, tapered/asymmetric I-sections, CHS, unsupported assembly members, unsupported copes, cuts outside the bounded flat-wall routes, blind bores and unrecognised surfaces block export.</p><p id="verification">No geometry has been analysed yet.</p></div></section>
     <section id="result" hidden><div class="result-heading"><h2>Generated NC1</h2><button id="copy">Copy text</button></div><pre id="nc1"></pre></section>
     <details id="hole-details" hidden><summary>Detected wall-hole coordinates</summary><div id="holes"></div></details>
     <details id="slot-details" hidden><summary>Detected edge slots · AK contour coordinates</summary><div id="slots"></div></details>
     <details id="cope-details" hidden><summary>Detected end copes · V/O/U AK coordinates</summary><div id="copes"></div></details>
-    <footer><span>SolidCraftDSTV · experimental browser preview · build 1379c980f165</span><a href="SOURCE-NOTICE.md">Source & format notes ↗</a></footer>
+    <footer><span>SolidCraftDSTV · experimental browser preview · build 8d3b837c0a41</span><a href="SOURCE-NOTICE.md">Source & format notes ↗</a></footer>
   </main>
-  <dialog id="report-panel" data-build="1379c980f165" aria-labelledby="report-title" aria-describedby="report-privacy">
+  <dialog id="report-panel" data-build="8d3b837c0a41" aria-labelledby="report-title" aria-describedby="report-privacy">
     <div class="report-heading"><h2 id="report-title">Report a problem</h2><button id="report-close" class="button quiet" type="button" autofocus>Close</button></div>
     <p id="report-privacy">Prepare a report locally. Nothing is uploaded automatically. Copy and download work without a GitHub account.</p>
     <p class="report-public">GitHub issues and attachments in DCB-ENG/step-dstv-converter are <strong>public</strong>. Review every word before sharing. Remove customer details from your description and any attachments.</p>
@@ -111,16 +125,32 @@
     <label>What happened?<textarea id="report-description" rows="3" maxlength="4000" placeholder="Describe the problem without customer or job identifiers."></textarea></label>
     <label>What did you expect?<textarea id="report-expected" rows="3" maxlength="4000"></textarea></label>
     <p class="hint">Automatic diagnostics omit raw errors, stack traces, file paths/names, part marks, SI text, layer/member names and file contents. Descriptions above are shared as written. No keystrokes or file content are logged. Recent operation history stays in memory and clears on reload.</p>
-    <p class="hint">Optional STEP/DXF, NC1 and screenshots: attach them yourself in GitHub after reviewing their contents and checking permission to share them publicly. This panel does not collect or upload attachments.</p>
-    <div class="report-heading"><label for="report-preview">Exactly what Copy / Download will share</label><button id="report-refresh" class="button quiet" type="button">Refresh diagnostics</button></div>
+    <fieldset class="report-attachments"><legend>File and screenshot</legend>
+      <label class="confirm"><input id="report-include-source" type="checkbox" disabled><span>Include this file</span></label>
+      <p id="report-source-detail" class="hint"></p>
+      <div class="report-actions">
+        <button id="report-choose-source" class="button" type="button">Choose a file…</button>
+        <input id="report-source-file" type="file" accept=".step,.stp,.dxf,.nc1" hidden>
+        <button id="report-use-loaded" class="button" type="button" hidden>Use the loaded file</button>
+      </div>
+      <div class="report-actions">
+        <button id="report-capture" class="button" type="button">Capture preview screenshot</button>
+        <button id="report-choose-screenshot" class="button" type="button">Choose a screenshot…</button>
+        <input id="report-screenshot-file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+      </div>
+      <label class="confirm"><input id="report-include-screenshot" type="checkbox" disabled><span>Include this screenshot</span></label>
+      <img id="report-screenshot-preview" alt="Screenshot selected for the report ZIP" hidden>
+      <button id="report-remove-screenshot" class="button quiet" type="button" hidden>Remove screenshot</button>
+    </fieldset>
+    <div class="report-heading"><label for="report-preview">Diagnostic text preview</label><button id="report-refresh" class="button quiet" type="button">Refresh diagnostics</button></div>
     <p class="hint">Diagnostics are a snapshot taken when this panel opens. Refresh to capture later operations. GitHub receives only a general draft until you paste this report.</p>
     <textarea id="report-preview" rows="12" readonly spellcheck="false" aria-label="Report preview"></textarea>
-    <div class="report-actions"><button id="report-copy" class="button primary" type="button">Copy report</button><button id="report-download" class="button" type="button">Download diagnostic report</button><button id="report-github" class="button" type="button">Open GitHub report</button></div>
-    <p class="hint">Open GitHub report copies this preview and opens a prefilled issue draft in a new tab. Paste the report, review it and submit it yourself. Report content is never put into the draft URL. GitHub may require sign-in.</p>
+    <div class="report-actions"><button id="report-zip" class="button primary" type="button">Download report ZIP</button><button id="report-copy" class="button" type="button">Copy report text</button><button id="report-download" class="button" type="button">Download text only</button><button id="report-github" class="button" type="button">Open GitHub report</button></div>
+    <p class="hint">Download the ZIP to save the report and selected attachments together. To share it publicly, open the GitHub draft and attach the reviewed ZIP there.</p>
     <p id="report-feedback" role="status" aria-live="polite"></p>
   </dialog>
-  <script type="module" src="problem_report.js?build=1379c980f165"></script>
-  <script type="module" src="app.js?build=1379c980f165"></script>
+  <script type="module" src="problem_report.js?build=8d3b837c0a41"></script>
+  <script type="module" src="app.js?build=8d3b837c0a41"></script>
 </body></html>
 
 

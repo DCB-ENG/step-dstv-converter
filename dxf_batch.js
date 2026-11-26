@@ -18,7 +18,9 @@ export class DxfPartReview{
     if(this.parts.length<2)return common;
     if(!this.parts[index])throw Error('Invalid part selection.');
     if(this.parts[index].error)throw Error('This member is unsupported: '+this.parts[index].error);
-    return {...common,part_mark:partMark(common.part_mark,index),profile:this.parts[index].analysis.suggested_profile};
+    const part=this.parts[index].analysis;
+    const {plate_hole_crosses:rule,...options}=common;
+    return {...options,part_mark:partMark(common.part_mark,index),profile:part.suggested_profile,...(part.family==='PLATE'&&rule&&{plate_hole_crosses:rule})};
   }
   allOptions(common){
     if(this.parts.some(p=>p.error))throw Error('Complete ZIP is blocked: one or more assembly members are unsupported. Supported members can be downloaded individually.');

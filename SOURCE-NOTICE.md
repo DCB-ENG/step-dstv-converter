@@ -195,8 +195,9 @@ customer STEP/NC1 files, workshop records and development/upstream checkouts.
 
 ## Shared geometry and output rules
 
-One supported solid per STEP conversion, at most 10 MiB, 512 imported faces and
-a 10 m body diagonal. Stock axes must align with selected perpendicular signed
+One supported solid per STEP conversion, at most 10 MiB and a 10 m body
+diagonal. Section recognition allows up to 512 imported faces. The separate
+plate budgets are described below. Stock axes must align with perpendicular signed
 world axes, except for the bounded measured RHS/SHS stock frame described below.
 Importer warnings, unknown surfaces, assemblies, unaccounted cuts and ambiguous
 recognition block export. General rotations, CHS, tapered/asymmetric I sections,
@@ -287,14 +288,18 @@ is used where a plane-cut Boolean was insufficiently accurate for rounded roots.
 One flat constant-thickness plate with an external line/arc outline, round
 through-holes and closed internal through-cuts. The plate path allows a
 3,400 mm body diagonal, covering 1,500 × 3,000 mm stock. The other budgets
-are 0.1–200 mm thickness smaller than both broad-face spans, 512 faces, 2048
-edges, 512 analytic spans and 32 internal loops. The plate path caps each edge
-projection tolerance at 0.0004 mm and verifies both original cap boundaries
-against rounded NC1 on larger plates within the existing total 0.002 mm budget.
-STEP requires two unsplit parallel broad faces. Bevels, countersinks, blind
-pockets and unsupported curves are refused.
+are 0.1–200 mm thickness smaller than both broad-face spans and 32 internal
+loops. STEP plates allow up to 1,024 faces, 4,096 edges and 1,024 line or arc
+spans per broad-face boundary. Either of the two opposing broad faces may
+consist of coplanar patches. The shared seams are removed from the cap boundary,
+and the complete source solid is verified against the reconstructed prism.
+The plate path caps each edge projection tolerance at 0.0004 mm and verifies
+both original cap boundaries against rounded NC1 on larger or denser plates
+within the total 0.002 mm budget. Bevels, countersinks, blind pockets and
+unsupported curves are refused.
 
-ASCII DXF is limited to 2 MiB and 256 selected entities: LINE, ARC, CIRCLE and
+ASCII DXF is limited to 2 MiB, 256 selected entities and 512 line or arc spans.
+Supported entities are LINE, ARC, CIRCLE and
 closed 2D LWPOLYLINE with signed bulges. Units (mm/inch), exact cutting layers and
 positive thickness must be supplied; present nonzero INSUNITS must agree.
 Unknown selected entities/groups, gaps, crossings, touching loops, nested islands,
@@ -317,6 +322,22 @@ two-decimal output is retained wherever it passes the same geometry check.
 Excessive rounding loss blocks output. This does not add plate NC1 import,
 nesting, bending or sheet-metal unfolding.
 
+### PU crosses for small plate holes
+
+The optional browser rule defaults to a maximum round through-hole diameter
+equal to the measured thickness of each plate. Custom limits let the operator
+set a minimum plate thickness and maximum hole diameter. Thresholds are
+inclusive and the cross span is adjustable in millimetres. Matching holes are
+omitted from BO and get two open, perpendicular PU strokes centered on the
+measured hole on face V. The preview overlays the
+strokes on the original geometry. The same rule applies to all plates in a batch.
+
+The original plate and every hole are verified first. The remaining cutting
+geometry is then checked from the rounded NC1 records, and the rounded mark
+strokes must clear the plate edge, retained openings and other generated crosses.
+This is a ProCAM-format preview. Open-stroke PU handling requires confirmation
+in ProCAM and on the marking equipment.
+
 ## Full-width I end copes
 
 At most four copes: top and/or bottom flange at either/both square ends, retaining
@@ -336,6 +357,12 @@ datum; explicit finished arcs do not invent t/w notch-tool instructions. Actual
 rounded V/O/U AK and BO are decoded and reconstructed before output.
 
 ## Viewer and acceptance
+
+**Report a problem** and **Report this problem** open the same dialog. The report
+ZIP can include one loaded or selected STEP/STP, DXF or NC1 file and one captured
+or selected screenshot. The file keeps its original bytes. Review the report
+and screenshot before attaching the ZIP to a public GitHub issue. The ZIP is
+created and downloaded in the browser.
 
 Three.js and OrbitControls 0.187.0 (MIT) are vendored locally from the official
 npm archive, verified by its published SHA-512 integrity. Their licence and file

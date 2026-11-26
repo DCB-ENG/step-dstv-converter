@@ -57,6 +57,13 @@ textarea{width:100%;border:1px solid var(--line);border-radius:4px;background:va
 @media(max-width:950px){.header-actions{margin-left:auto}}
 @media(max-width:700px){header{padding:0 12px;gap:10px}.header-actions .button{font-size:10px}header .badge{display:none}#report-panel{padding:16px}.report-actions{flex-direction:column}}
 
+.report-attachments{margin:20px 0;padding:16px;border:1px solid var(--line);border-radius:6px;min-width:0}
+.report-attachments legend{color:var(--text);font-size:13px;padding:0 6px}
+.report-attachments .confirm{margin:10px 0}.report-attachments .report-actions{margin-top:10px}
+#report-source-detail{overflow-wrap:anywhere}
+#report-screenshot-preview{display:block;max-width:100%;max-height:260px;margin:12px auto;border:1px solid var(--line);object-fit:contain}
+#report-remove-screenshot{margin-bottom:8px}
+
 
 /* DCB ENG shared workshop navigation */
 .dcb-nav{background:#181b20;border-bottom:1px solid #393e46;color:#f1f3f5;font:14px/1.45 system-ui,"Segoe UI",Arial,sans-serif}

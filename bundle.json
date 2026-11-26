@@ -1,14 +1,14 @@
 {
   "version": "0.1.0",
-  "build": "1379c980f165",
+  "build": "8d3b837c0a41",
   "files": [
     {
       "path": "app.js",
-      "sha256": "4ed6610f06c41288719ff0790774febe0342811e8b3a1d996c37627e541b051f"
+      "sha256": "60c3ee8e2315645420358fbbf04113e07db93662fb47d553e374d8be73116371"
     },
     {
       "path": "dxf_batch.js",
-      "sha256": "6e9280b300d756338d8fee4cf819c363168c63c1452607bb8b0ec46bdfe2d07d"
+      "sha256": "ea8e543b58ec63a177323809239b22b1fa303a49df7a97e00e199a958c206c7a"
     },
     {
       "path": "dxf_preview.js",
@@ -20,11 +20,11 @@
     },
     {
       "path": "identical_parts.js",
-      "sha256": "ed000b171cb7d358962b99f78afb278ae8245a92e15fc67c77d35e8e47943ef2"
+      "sha256": "8663eec3d40a6dfdd1630d789133ed582b4b2d45dd8a741bfb6c0c97a594c70f"
     },
     {
       "path": "index.html",
-      "sha256": "9655057a6bfbbcc8f7ff6cb20ecd552115dae9f6c655b15f0e6e0aa4f2f0fe3d"
+      "sha256": "0f2a398fb5050823b3f03765385a754c172c84bda7c303dc7cfce91742515698"
     },
     {
       "path": "LICENSE-APACHE",
@@ -36,7 +36,7 @@
     },
     {
       "path": "nc1_zip.js",
-      "sha256": "bae8e7e86f7ddbb8b45b6b864bd146f3c75ec1faa4a46d32083f63b220ae41a0"
+      "sha256": "84a973d0f2cc9a993624af6bd2a7e602486aa7dbeaef478564a6f99311463ae1"
     },
     {
       "path": "NOTICE",
@@ -52,7 +52,7 @@
     },
     {
       "path": "pkg/step_dstv_core_bg.wasm",
-      "sha256": "1f069bc6e26e25f427ab5cd020e2d70ebd022b9ce845b3f56aeec23aa097404c"
+      "sha256": "94e74a03ec3f49874f801085fef7c0c4623e82bf750f83d432e39b450e279eb4"
     },
     {
       "path": "pkg/step_dstv_core_bg.wasm.d.ts",
@@ -60,11 +60,15 @@
     },
     {
       "path": "problem_report.js",
-      "sha256": "19a91358d8848ead3c665b93cccd284cb2ce7f5cfd7c9eabfc504bb0a0cec674"
+      "sha256": "20f542f4804a859b61e1eb9d1365262af73d65ee4abfce7dcc07bd02cf3b5338"
+    },
+    {
+      "path": "report_attachments.js",
+      "sha256": "a7c008a1c8579c5a3ae9c2557cf9b5c7ead10f859f25183ffe54292de0474408"
     },
     {
       "path": "report_diagnostics.js",
-      "sha256": "417cf9026ed7c86603f2556f8ea5d3ddc9262d2129cec63415e72d92e8c91d6f"
+      "sha256": "6ae72822b38c631e300ed3c2bdbc5fa3b8f5095782f02dadb14d53586943fd20"
     },
     {
       "path": "report_startup.js",
@@ -72,7 +76,7 @@
     },
     {
       "path": "SOURCE-NOTICE.md",
-      "sha256": "46977cd7a7d3f3f6dcc62845caaa823651de142d05d23c0b38eb0f3d204f0ffc"
+      "sha256": "ca85527191ae14d6d3f431a47019c8c40eab1decfdc110f8c157542157aee385"
     },
     {
       "path": "step_detection.js",
@@ -80,7 +84,7 @@
     },
     {
       "path": "style.css",
-      "sha256": "a0650c34b30c0e80b8d0532b91486c78841df0036bb4a1b32cfd24e64c1d1711"
+      "sha256": "39b9dc11181b21f357c53743e619ca70d4726014adce0ee71d1f32b2a822d0bd"
     },
     {
       "path": "THIRD-PARTY-LICENSES.txt",
@@ -112,7 +116,7 @@
     },
     {
       "path": "worker.js",
-      "sha256": "395d9c7503a9efc9890b8e713b22d723939948523e03182a2224cb77c7aa134f"
+      "sha256": "fb0fad83aef8d3c4eed4d969fd7fb7a6bb954694e1e1021e1d6a85ba853ee48d"
     }
   ]
 }
